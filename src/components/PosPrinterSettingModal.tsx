@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import clsx from "clsx";
@@ -17,7 +17,7 @@ import { theme, baseStyles, ModalCancelButton } from "../styles/base";
 import * as storeAction from "../redux/actions/storeAction";
 import Api from "../Api";
 import { ButtonGroup, Select } from "@material-ui/core";
-import { Button, FormControl, InputLabel, MenuItem } from "@mui/material";
+import { Button, FormControl, InputLabel, MenuItem, SelectChangeEvent } from "@mui/material";
 
 interface IProps {
   isOpen: boolean;
@@ -28,11 +28,29 @@ interface Object {
   [key: string]: string;
 }
 
+const BAUD_RATE = [110, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200];
+
 export default function PosPrinterSettingModal(props: IProps) {
   const base = baseStyles();
   const dispatch = useDispatch();
   const { mt_jumju_key } = useSelector((state: any) => state.login);
   const { allStore, closedStore } = useSelector((state: any) => state.store);
+
+  const [port, setPort] = useState('');
+  const [baudRate, setBaudRate] = useState('');
+
+
+  const changePortHandler = (event: SelectChangeEvent) => {
+    setPort(event.target.value as string)
+  }
+
+  const changeBaudRateHandler = (event: SelectChangeEvent) => {
+    setBaudRate(event.target.value as string)
+  }
+
+  const printTest = () => {
+    console.log('print test!')
+  }
 
   return (
     <Modal
@@ -86,12 +104,10 @@ export default function PosPrinterSettingModal(props: IProps) {
                 <Select
                   labelId="demo-simple-select-helper-label"
                   id="demo-simple-select-helper"
+                  value={port}
                   label="Port"
+                  onChange={changePortHandler}
                 >
-                  <InputLabel id="demo-simple-select-helper-label">
-                    Port
-                  </InputLabel>
-                  <MenuItem value="">NONE</MenuItem>
                   <MenuItem value="COM3">COM3</MenuItem>
                   <MenuItem value="COM4">COM4</MenuItem>
                 </Select>
@@ -114,14 +130,13 @@ export default function PosPrinterSettingModal(props: IProps) {
                 <Select
                   labelId="demo-simple-select-helper-label"
                   id="demo-simple-select-helper"
+                  value={baudRate}
                   label="BoudRate"
+                  onChange={changeBaudRateHandler}
                 >
-                  <InputLabel id="demo-simple-select-helper-label">
-                    Port
-                  </InputLabel>
-                  <MenuItem value="">NONE</MenuItem>
-                  <MenuItem value="COM3">COM3</MenuItem>
-                  <MenuItem value="COM4">COM4</MenuItem>
+                  {BAUD_RATE.map((rate, index) => (
+                    <MenuItem key={index} value={rate}>{rate}</MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Box>
@@ -137,6 +152,7 @@ export default function PosPrinterSettingModal(props: IProps) {
                 fontWeight: "bold",
                 boxShadow: "none",
               }}
+              onClick={printTest}
             >
               테스트인쇄
             </Button>
