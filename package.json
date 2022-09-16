@@ -72,7 +72,8 @@
     "build:osx": "yarn build --mac",
     "build:win32": "yarn build --win --ia32",
     "build:win64": "yarn build --win --x64",
-    "build:win": "yarn build:win32 && yarn build:win64"
+    "build:win": "yarn build:win32 && yarn build:win64",
+    "start:electron": "tsc -p electron/tsconfig.json && concurrently \"cross-env BROWSER=none npm run start:web\" \"wait-on http://localhost:3000 && electron ./build/electron.js\""
   },
   "build": {
     "productName": "동네북점주",

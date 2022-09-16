@@ -1,53 +1,67 @@
-import { app, BrowserWindow, Menu, ipcMain } from 'electron';
-import * as path from 'path';
-const fs = require('fs');
-const os = require('os');
-const url = require('url');
-const { setup: setupPushReceiver } = require('electron-push-receiver');
+import { app, BrowserWindow, Menu, ipcMain } from "electron";
+import * as path from "path";
+const fs = require("fs");
+const os = require("os");
+const url = require("url");
+const { setup: setupPushReceiver } = require("electron-push-receiver");
+import * as isDev from "electron-is-dev";
 
 let mainWindow: Electron.BrowserWindow | null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    titleBarStyle: 'customButtonsOnHover',
+    titleBarStyle: "customButtonsOnHover",
     roundedCorners: false,
-    vibrancy: 'fullscreen-ui',
+    vibrancy: "fullscreen-ui",
     transparent: true,
     frame: false,
     resizable: false,
     autoHideMenuBar: true,
     width: 1024,
     height: 768,
-    backgroundColor: '#2e2c29',
+    backgroundColor: "#2e2c29",
     kiosk: false, // 키오스크 모드(실행시 전체 화면 fixed)
     center: true,
-    title: '오늘의주문',
-    icon: path.join(app.getAppPath(), '/build/icons/png/64x64.png'),
+    title: "동네북",
+    icon: path.join(
+      app.getAppPath(),
+      isDev ? "/icons/png/64x64.png" : "/build/icons/png/64x64.png"
+    ),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
       enableRemoteModule: true,
-      preload: path.join(app.getAppPath(), '/preload.js'), // 빌드시 /build/preload.js 로 변경 필요
+      preload: path.join(
+        app.getAppPath(),
+        isDev ? "/preload.js" : "/build/preload.js"
+      ), // 빌드시 /build/preload.js 로 변경 필요
     },
   });
 
   let indexPath;
 
   indexPath = url.format({
-    protocol: 'file:',
-    pathname: path.join(app.getAppPath(), '/index.html'), // 빌드시 /build/index.html 로 변경 필요
+    protocol: "file:",
+    pathname: path.join(
+      app.getAppPath(),
+      isDev ? "/index.html" : "/build/index.html"
+    ), // 빌드시 /build/index.html 로 변경 필요
     slashes: true,
   });
-  mainWindow.loadURL(indexPath);
+
   setupPushReceiver(mainWindow.webContents);
 
   // 기본 메뉴 숨기기
   mainWindow.setMenuBarVisibility(false);
 
-  // 개발자 툴 오픈
-  mainWindow.webContents.openDevTools(); // 빌드시 해제 필요
+  if (isDev) {
+    mainWindow.loadURL("http://localhost:3000");
+    mainWindow.webContents.openDevTools(); // // 개발자 툴 오픈
+  } else {
+    mainWindow.loadURL(indexPath);
+  }
 
-  mainWindow.on('closed', () => {
+  mainWindow.on("closed", () => {
     mainWindow = null;
   });
 }
@@ -56,20 +70,20 @@ function createWindow() {
 Menu.setApplicationMenu(null);
 
 // 프린트 기능
-ipcMain.on('pos_print', (event, data) => {
+ipcMain.on("pos_print", (event, data) => {
   let win = new BrowserWindow({ width: 302, height: 793, show: false });
-  win.once('ready-to-show', () => win.hide());
-  fs.writeFile(path.join(os.tmpdir(), '/printme.html'), data, function () {
-    win.loadURL(`file://${path.join(os.tmpdir(), 'printme.html')}`);
+  win.once("ready-to-show", () => win.hide());
+  fs.writeFile(path.join(os.tmpdir(), "/printme.html"), data, function () {
+    win.loadURL(`file://${path.join(os.tmpdir(), "printme.html")}`);
 
-    win.webContents.on('did-finish-load', () => {
+    win.webContents.on("did-finish-load", () => {
       // Finding Default Printer name
       let printerInfo = win.webContents.getPrinters();
       let printer = printerInfo.filter(
         (printer) => printer.isDefault === true
       )[0];
 
-      console.log('printer info', printer);
+      console.log("printer info", printer);
 
       const options = {
         marginsType: 0,
@@ -91,75 +105,75 @@ ipcMain.on('pos_print', (event, data) => {
 });
 
 // 창 닫기
-ipcMain.on('windowClose', (event, data) => {
-  console.log('app quit?', data);
+ipcMain.on("windowClose", (event, data) => {
+  console.log("app quit?", data);
   app.exit();
 });
 
 // 창 내리기
-ipcMain.on('windowMinimize', (event, data) => {
+ipcMain.on("windowMinimize", (event, data) => {
   mainWindow.minimize();
 });
 
 // 토큰 가져오기
-let fcmToken = '';
-ipcMain.on('fcmToken', (event, data) => {
-  console.log('electron token data', data);
+let fcmToken = "";
+ipcMain.on("fcmToken", (event, data) => {
+  console.log("electron token data", data);
   fcmToken = data;
-  event.sender.send('electronToken', data);
+  event.sender.send("electronToken", data);
 });
 
-ipcMain.on('callToken', (event, data) => {
-  event.sender.send('electronToken', fcmToken);
+ipcMain.on("callToken", (event, data) => {
+  event.sender.send("electronToken", fcmToken);
 });
 
 // 사운드 카운트 받기
-ipcMain.on('sound_count', (event, data) => {
-  event.sender.send('get_sound_count', data);
+ipcMain.on("sound_count", (event, data) => {
+  event.sender.send("get_sound_count", data);
 });
 
 // 접수 처리 시 사운드 STOP
-ipcMain.on('sound_stop', (event, data) => {
-  event.sender.send('get_stop_sound', data);
+ipcMain.on("sound_stop", (event, data) => {
+  event.sender.send("get_stop_sound", data);
 });
 
 // 사운드 VOLUMNE 설정
-ipcMain.on('sound_volume', (event, data) => {
-  event.sender.send('get_sound_vol', data);
+ipcMain.on("sound_volume", (event, data) => {
+  event.sender.send("get_sound_vol", data);
 });
 
 // 프린트 정보 열기
-ipcMain.on('openPrint', (event, data) => {
+ipcMain.on("openPrint", (event, data) => {
   const printerInfo = mainWindow.webContents.getPrinters();
-  console.log('printerInfo ??', printerInfo);
-  event.sender.send('printInfo', printerInfo);
+  console.log("printerInfo ??", printerInfo);
+  event.sender.send("printInfo", printerInfo);
 });
 
 // 메인프로세서 종료
-ipcMain.on('closeWindow', (event, data) => {
+ipcMain.on("closeWindow", (event, data) => {
   mainWindow = null;
-  if (process.platform !== 'darwin') {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
-if (process.platform === 'win32') {
-  app.setAppUserModelId('오늘의 주문');
+if (process.platform === "win32") {
+  app.setAppUserModelId("오늘의 주문");
 }
 
-ipcMain.handle('quit-app', () => {
+ipcMain.handle("quit-app", () => {
   app.quit();
 });
 
-app.on('ready', createWindow);
+app.on("ready", createWindow);
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
-app.on('activate', () => {
+app.on("activate", () => {
   if (mainWindow === null) {
     createWindow();
   }

@@ -1,5 +1,5 @@
-import jwt_decode from 'jwt-decode';
-import Axios from 'axios';
+import jwt_decode from "jwt-decode";
+import Axios from "axios";
 // import ImageEditor from "@react-native-community/image-editor";
 // var RNFS = require('react-native-fs');
 
@@ -26,15 +26,15 @@ class Api {
 
     this.state = {
       isLoading: false,
-      SERVER_NAME: 'ohjoo_server',
-      SECRETKEY: '1111882EAD94E9C493CEF089E1B023A2122BA778',
-      url: 'https://dmonster1452.cafe24.com',
-      path: '',
+      SERVER_NAME: "ohjoo_server",
+      SECRETKEY: "1111882EAD94E9C493CEF089E1B023A2122BA778",
+      url: "https://dongnaebook.app",
+      path: "",
       option: {
-        method: 'POST',
+        method: "POST",
         headers: {
           //Accept: 'application/json',
-          'Content-Type': 'multipart/form-data;charset=UTF-8',
+          "Content-Type": "multipart/form-data;charset=UTF-8",
         },
         body: null,
       },
@@ -43,19 +43,19 @@ class Api {
   }
 
   //formdata 로 변경
-  makeFormData(method = '', datas) {
+  makeFormData(method = "", datas) {
     let formdata = new FormData();
-    formdata.append('method', method);
-    formdata.append('secretKey', this.state.SECRETKEY);
-    formdata.append('jwt_data', datas);
+    formdata.append("method", method);
+    formdata.append("secretKey", this.state.SECRETKEY);
+    formdata.append("jwt_data", datas);
 
-    this.state.path = '/api/proc_' + method + '.php';
+    this.state.path = "/api/proc_" + method + ".php";
     this.state.option.body = formdata;
   }
 
   //기본
   send(method, datas, callback) {
-    const jwt = require('jwt-encode');
+    const jwt = require("jwt-encode");
     const jwt_secret = this.state.SECRETKEY;
     const jwt_data = jwt(datas, jwt_secret);
 
@@ -85,7 +85,7 @@ class Api {
 
         let returnJson = {
           resultItem: {
-            result: resultItem === 'false' ? 'N' : 'Y',
+            result: resultItem === "false" ? "N" : "Y",
             total_cnt: total_cnt,
             message: message,
             sql: sql,
@@ -96,15 +96,15 @@ class Api {
         // this.state.dataSource = arrItems;
         //각 메소드별로 값을 저장해둠.
 
-        if (resultItem === 'N' && message) {
+        if (resultItem === "N" && message) {
           //console.log(method, message);
-          if (!(method === 'proc_check_reserve')) {
+          if (!(method === "proc_check_reserve")) {
             // cusToast(message);
             console.log(message);
           }
         }
 
-        if (typeof callback == 'function') {
+        if (typeof callback == "function") {
           callback(returnJson);
         } else {
           return returnJson;
@@ -112,27 +112,27 @@ class Api {
       })
       .catch(function (error) {
         console.log(
-          'Axios catch!!!>>',
-          'method ::',
+          "Axios catch!!!>>",
+          "method ::",
           method,
-          ', error ::',
+          ", error ::",
           error
         );
       });
   }
 
   //formdata 로 변경 jwt없이
-  makeFormData2(method = '', datas) {
+  makeFormData2(method = "", datas) {
     let formdata = new FormData();
-    formdata.append('method', method);
-    formdata.append('secretKey', '1111882EAD94E9C493CEF089E1B023A2122BA778');
+    formdata.append("method", method);
+    formdata.append("secretKey", "1111882EAD94E9C493CEF089E1B023A2122BA778");
     for (let [key, value] of Object.entries(datas)) {
       formdata.append(key, value);
       // console.log('form key', key);
       // console.log('form value', value);
     }
 
-    this.state.path = '/api/proc_' + method + '.php';
+    this.state.path = "/api/proc_" + method + ".php";
     this.state.option.body = formdata;
   }
 
@@ -163,14 +163,14 @@ class Api {
         let sql = response.data.resultItem.sql;
         let arrItems = response.data.arrItems;
 
-        console.log('api resultItem', resultItem);
-        console.log('api message', message);
-        console.log('api sql', sql);
-        console.log('api arrItems', arrItems);
+        console.log("api resultItem", resultItem);
+        console.log("api message", message);
+        console.log("api sql", sql);
+        console.log("api arrItems", arrItems);
 
         let returnJson = {
           resultItem: {
-            result: resultItem === 'false' ? 'N' : 'Y',
+            result: resultItem === "false" ? "N" : "Y",
             message: message,
             sql: sql,
           },
@@ -180,56 +180,56 @@ class Api {
         // this.state.dataSource = arrItems;
         //각 메소드별로 값을 저장해둠.
 
-        if (resultItem === 'N' && message) {
+        if (resultItem === "N" && message) {
           //console.log(method, message);
-          if (!(method === 'proc_check_reserve')) {
+          if (!(method === "proc_check_reserve")) {
             // cusToast(message);
             console.log(message);
           }
         }
 
-        if (typeof callback == 'function') {
+        if (typeof callback == "function") {
           callback(returnJson);
         } else {
           return returnJson;
         }
       })
       .catch(function (error) {
-        console.log('Axios catch!!!>>', method, error);
-        console.log('Axios catch!!! error >>', error);
-        console.log('Axios catch!!! method >>', method);
+        console.log("Axios catch!!!>>", method, error);
+        console.log("Axios catch!!! error >>", error);
+        console.log("Axios catch!!! method >>", method);
       });
   }
 
   //formdata 로 변경
-  makeFormData3(method = '', datas, filedatas) {
+  makeFormData3(method = "", datas, filedatas) {
     console.log(datas);
     let formdata = new FormData();
-    formdata.append('method', method);
-    formdata.append('secretKey', '1111882EAD94E9C493CEF089E1B023A2122BA778');
-    formdata.append('jwt_data', datas);
+    formdata.append("method", method);
+    formdata.append("secretKey", "1111882EAD94E9C493CEF089E1B023A2122BA778");
+    formdata.append("jwt_data", datas);
 
     for (let [key, value] of Object.entries(filedatas)) {
       formdata.append(key, value);
     }
 
-    this.state.path = '/api/proc_' + method + '.php';
+    this.state.path = "/api/proc_" + method + ".php";
     this.state.option.body = formdata;
 
-    console.log('formdata3', formdata);
+    console.log("formdata3", formdata);
   }
 
   // 기본03
   send3(method, datas, filedatas, callback) {
     //console.log(datas);
-    const jwt = require('jwt-encode');
+    const jwt = require("jwt-encode");
     const jwt_secret = this.state.SECRETKEY;
     const jwt_data = jwt(datas, jwt_secret);
     //console.log("jwtData : " + jwt_data);
 
-    console.log('send3 method', method);
-    console.log('send3 datas', datas);
-    console.log('send3 filedatas', filedatas);
+    console.log("send3 method", method);
+    console.log("send3 datas", datas);
+    console.log("send3 filedatas", filedatas);
 
     this.makeFormData3(method, jwt_data, filedatas);
 
@@ -252,7 +252,7 @@ class Api {
 
         let returnJson = {
           resultItem: {
-            result: resultItem === 'false' ? 'N' : 'Y',
+            result: resultItem === "false" ? "N" : "Y",
             message: message,
             sql: sql,
           },
@@ -264,60 +264,60 @@ class Api {
 
         //console.log(resultItem);
 
-        if (resultItem === 'N' && message) {
+        if (resultItem === "N" && message) {
           //console.log(method, message);
-          if (!(method === 'proc_check_reserve')) {
+          if (!(method === "proc_check_reserve")) {
             console.log(message);
             // cusToast(message);
           }
         }
 
-        if (typeof callback == 'function') {
+        if (typeof callback == "function") {
           callback(returnJson);
         } else {
           return returnJson;
         }
       })
       .catch(function (error) {
-        console.log('Axios catch!!!>>', method, error);
+        console.log("Axios catch!!!>>", method, error);
       });
   }
 
   comma(str) {
     str = String(str);
-    return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+    return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, "$1,");
   }
   //콤마풀기
   uncomma(str) {
     str = String(str);
-    return str.replace(/[^\d]+/g, '');
+    return str.replace(/[^\d]+/g, "");
   }
   //--------------------------------------------------------------------------------------------------
   // 전화번호 포맷
   phoneFomatter(num, type) {
-    let formatNum = '';
+    let formatNum = "";
     let stringNum = String(num);
 
     if (stringNum.length === 11) {
       if (type === 0) {
-        formatNum = stringNum.replace(/(\d{3})(\d{4})(\d{4})/, '$1-****-$3');
+        formatNum = stringNum.replace(/(\d{3})(\d{4})(\d{4})/, "$1-****-$3");
       } else {
-        formatNum = stringNum.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+        formatNum = stringNum.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
       }
     } else if (stringNum.length === 8) {
-      formatNum = stringNum.replace(/(\d{4})(\d{4})/, '$1-$2');
+      formatNum = stringNum.replace(/(\d{4})(\d{4})/, "$1-$2");
     } else {
-      if (stringNum.indexOf('02') === 0) {
+      if (stringNum.indexOf("02") === 0) {
         if (type === 0) {
-          formatNum = stringNum.replace(/(\d{2})(\d{4})(\d{4})/, '$1-****-$3');
+          formatNum = stringNum.replace(/(\d{2})(\d{4})(\d{4})/, "$1-****-$3");
         } else {
-          formatNum = stringNum.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+          formatNum = stringNum.replace(/(\d{2})(\d{4})(\d{4})/, "$1-$2-$3");
         }
       } else {
         if (type === 0) {
-          formatNum = stringNum.replace(/(\d{3})(\d{3})(\d{4})/, '$1-***-$3');
+          formatNum = stringNum.replace(/(\d{3})(\d{3})(\d{4})/, "$1-***-$3");
         } else {
-          formatNum = stringNum.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+          formatNum = stringNum.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3");
         }
       }
     }
