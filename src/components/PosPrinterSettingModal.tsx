@@ -64,11 +64,20 @@ export default function PosPrinterSettingModal(props: IProps) {
           <Typography id="transition-modal-description">
             영수증 프린터기의 세부 정보를 설정해주세요.
           </Typography>
-          <Box sx={{ m: 1 }} />
+          <Box
+            style={{ height: 1, width: "100%", backgroundColor: "#d5d5d5" }}
+            my={2}
+          />
+
           <Box className={base.flexColumn}>
             <Box className={base.flexRowStartCenter}>
               <Typography
-                style={{ minWidth: 75, flex: 1, textAlign: "left" }}
+                style={{
+                  minWidth: 75,
+                  flex: 1,
+                  textAlign: "left",
+                  fontWeight: "bold",
+                }}
                 sx={{ mr: 2 }}
               >
                 Port
@@ -91,7 +100,12 @@ export default function PosPrinterSettingModal(props: IProps) {
             <Box sx={{ m: 1 }} />
             <Box className={base.flexRowStartCenter}>
               <Typography
-                style={{ minWidth: 75, flex: 1, textAlign: "left" }}
+                style={{
+                  minWidth: 75,
+                  flex: 1,
+                  textAlign: "left",
+                  fontWeight: "bold",
+                }}
                 sx={{ mr: 2 }}
               >
                 BoudRate
@@ -112,10 +126,7 @@ export default function PosPrinterSettingModal(props: IProps) {
               </FormControl>
             </Box>
           </Box>
-          <Box
-            style={{ height: 1, width: "100%", backgroundColor: "#d5d5d5" }}
-            my={2}
-          />
+          <Box mb={2} />
           <ButtonGroup fullWidth>
             <Button
               variant="outlined"
