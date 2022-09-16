@@ -1,0 +1,155 @@
+{
+  "name": "dongnaebook_owner",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "./",
+  "dependencies": {
+    "@date-io/date-fns": "1.x",
+    "@date-io/moment": "1.3.13",
+    "@emotion/react": "^11.4.0",
+    "@emotion/styled": "^11.3.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-fontawesome": "^0.1.15",
+    "@material-ui/core": "^5.0.0-beta.2",
+    "@material-ui/icons": "^5.0.0-beta.1",
+    "@material-ui/lab": "^5.0.0-alpha.41",
+    "@material-ui/pickers": "^3.3.10",
+    "@material-ui/styled-engine-sc": "^5.0.0-beta.1",
+    "@material-ui/styles": "^4.11.4",
+    "@mui/icons-material": "^5.0.1",
+    "@mui/material": "^5.0.0-rc.0",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^16.4.6",
+    "@types/react": "^17.0.15",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-redux": "^7.1.18",
+    "@types/react-router-dom": "^5.1.8",
+    "axios": "^0.21.1",
+    "clsx": "^1.1.1",
+    "date-fns": "^2.23.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-push-receiver": "^2.1.3",
+    "firebase": "^8.8.0",
+    "fs": "^0.0.1-security",
+    "jwt-decode": "^3.1.2",
+    "jwt-encode": "^1.0.1",
+    "moment": "^2.29.1",
+    "react": "^17.0.2",
+    "react-datepicker": "^4.1.1",
+    "react-dates": "^21.8.0",
+    "react-day-picker": "7.4.10",
+    "react-dom": "^17.0.2",
+    "react-draggable": "^4.4.3",
+    "react-hot-toast": "^2.1.0",
+    "react-image-lightbox": "^5.1.4",
+    "react-number-format": "^4.7.3",
+    "react-redux": "^7.2.4",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "^4.0.3",
+    "react-to-print": "^2.12.6",
+    "redux": "^4.1.0",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-persist": "^6.0.0",
+    "serialport": "^9.2.1",
+    "styled-components": "^5.3.0",
+    "typescript": "^4.3.5",
+    "web-vitals": "^1.0.1",
+    "webpack-target-electron-renderer": "^0.4.0"
+  },
+  "scripts": {
+    "start:web": "react-scripts start",
+    "build:web": "react-scripts build",
+    "build:desktop": "tsc -p electron/tsconfig.json",
+    "start:desktop": "npm run build:desktop && electron ./build/electron.js",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "deploy": "electron-builder --windows nsis:ia32",
+    "build": "electron-builder build",
+    "build:osx": "yarn build --mac",
+    "build:win32": "yarn build --win --ia32",
+    "build:win64": "yarn build --win --x64",
+    "build:win": "yarn build:win32 && yarn build:win64"
+  },
+  "build": {
+    "productName": "동네북점주",
+    "appId": "com.dongnaebookOwner.electron",
+    "files": [
+      "build/**/*",
+      "icon.png",
+      "electron.js"
+    ],
+    "asar": true,
+    "mac": {
+      "target": [
+        "default"
+      ],
+      "icon": "build/icons/mac/icon.icns"
+    },
+    "dmg": {
+      "title": "동네북점주",
+      "icon": "build/icons/mac/icon.icns"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "ia32",
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icons/win/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "perMachine": true,
+      "language": 1042,
+      "installerIcon": "build/icons/win/icon.ico",
+      "shortcutName": "동네북점주",
+      "artifactName": "동네북점주-${version}.${ext}",
+      "uninstallDisplayName": "동네북점주"
+    },
+    "directories": {
+      "buildResources": "./build/",
+      "output": "./dist/"
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/electron": "^1.6.10",
+    "@types/react-calendar": "3.4.3",
+    "@types/react-datepicker": "^4.1.4",
+    "@types/react-dates": "^21.8.3",
+    "@types/styled-components": "^5.1.12",
+    "concurrently": "^6.2.1",
+    "cross-env": "^7.0.3",
+    "electron": "^13.2.1",
+    "electron-builder": "^22.11.7",
+    "electron-rebuild": "^3.2.3",
+    "wait-on": "^6.0.0"
+  }
+}
