@@ -4,6 +4,9 @@ const fs = require("fs");
 const os = require("os");
 const url = require("url");
 const { setup: setupPushReceiver } = require("electron-push-receiver");
+const { SerialPort } = require('serialport')
+const escpos = require('escpos')
+escpos.SerialPort = require('escpos-serialport');
 import * as isDev from "electron-is-dev";
 
 let mainWindow: Electron.BrowserWindow | null;
@@ -68,6 +71,108 @@ function createWindow() {
 
 // 브라우저 메뉴창 없애기
 Menu.setApplicationMenu(null);
+
+// const device = new SerialPort({
+//   path: 'COM4',
+//   baudRate: 9600
+// })
+const device = new escpos.SerialPort('COM4', { baudRate: 9600 });
+
+const options = { encoding: 'cp949' }
+const printer = new escpos.Printer(device, options)
+
+device.open(function(err: any) {
+  console.log('serialport error', err)
+
+  printer
+  .size(0.01, 0.01)
+  .font('A')
+  .align('ct')
+  .style('bu')
+  .text('동네북 영수증')
+  .newLine()
+  .align('LT')
+  .style('NORMAL')
+  .tableCustom([
+    { text: 'Date:', width: 0.2 },
+    { text: '2021-01-04 11:11', width: 0.6 }
+  ])
+  .style('NORMAL')
+  .tableCustom([
+    { text: 'Order ID:', width: 0.2 },
+    { text: '050-7866-2406', width: 0.6 }
+  ])
+  .style('NORMAL')
+  .tableCustom([
+    { text: '전화번호:', width: 0.2 },
+    { text: '200000000', width: 0.6, align: 'LEFT' }
+  ], { encoding: 'EUC-KR' })
+  .tableCustom([
+    { text: '메모:', width: 0.4 },
+    { text: '문앞에 두고 벨을 눌러주세요', width: 0.6 }
+  ], 'CP949')
+  .drawLine()
+  .newLine()
+  .tableCustom([
+    { text: '기사님 이름:', width: 0.4 },
+    { text: '기사이름', width: 0.6 }
+  ], 'CP949')
+  .tableCustom([
+    { text: '기사님 번호:', width: 0.4 },
+    { text: '010-1234-5678', width: 0.6 }
+  ], 'CP949')
+  .drawLine()
+  .newLine()
+  .tableCustom([
+    { text: '합계', width: 0.4, align: 'LEFT' },
+    { text: '2,000,000 원', width: 0.6, align: 'RIGHT' }
+  ], 'CP949')
+  .tableCustom([
+    { text: '배송료(11.2km)', width: 0.4, align: 'LEFT' },
+    { text: '2,000 원', width: 0.6, align: 'RIGHT' }
+  ], 'CP949')
+  .tableCustom([
+    { text: '수수료', width: 0.4, align: 'LEFT' },
+    { text: '-0 원', width: 0.6, align: 'RIGHT' }
+  ], 'CP949')
+  .drawLine()
+  .newLine()
+  .tableCustom([
+    { text: '총금액', width: 0.4, align: 'LEFT' },
+    { text: '2,000,000 원', width: 0.6, align: 'RIGHT' }
+  ], 'CP949')
+  .newLine()
+  .newLine()
+  .newLine()
+  .cut()
+  .close();
+  
+});
+
+  // printer
+  //   .font('a')
+  //   .align('ct')
+  //   .style('bu')
+  //   .size(1, 1)
+  //   .text('The quick brown fox jumps over the lazy dog')
+  //   .text('테스트 영수증 프린터')
+  //   .cut()
+  //   .close();
+  //   // .barcode('1234567', 'EAN8')
+  //   // .table(["One", "Two", "Three"])
+  //   // .tableCustom(
+  //   //   [
+  //   //     { text:"Left", align:"LEFT", width:0.33, style: 'B' },
+  //   //     { text:"Center", align:"CENTER", width:0.33},
+  //   //     { text:"Right", align:"RIGHT", width:0.33 }
+  //   //   ],
+  //   //   { encoding: 'cp857', size: [1, 1] } // Optional
+  //   // )
+  //   // .qrimage('https://github.com/song940/node-escpos', function(err: any){
+  //   //   this.cut();
+  //   //   this.close();
+  //   // });
+// })
 
 // 프린트 기능
 ipcMain.on("pos_print", (event, data) => {
