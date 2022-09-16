@@ -71,6 +71,7 @@ import Logo from "../assets/images/logo.png";
 import CloseStoreModal from "./CloseStoreModal"; // 영업중지 모달
 import Api from "../Api";
 import appRuntime from "../appRuntime";
+import PosPrinterSettingModal from "./PosPrinterSettingModal";
 
 const drawerWidth = 180;
 interface OptionalProps {
@@ -142,9 +143,12 @@ export default function ResponsiveDrawer(props: OptionalProps) {
   const [curPathName, setCurPathName] = React.useState("");
 
   const [closeStoreModalOpen, setCloseStoreModalOpen] = React.useState(false); // 영업정지 모달 상태
+  const [closePosPrinterModalOpen, setPosPrinterModalOpen] =
+    React.useState(false); // POS 프린터 설정 모달 상태
 
   console.log("헤더 props ??", props);
 
+  // 영업일지정지 모달 핸들러
   const openCloseStoreModal = () => {
     setCloseStoreModalOpen(true);
   };
@@ -153,6 +157,14 @@ export default function ResponsiveDrawer(props: OptionalProps) {
   };
   const openCloseStoreModalHandler = () => {
     openCloseStoreModal();
+  };
+
+  // Pos 프린터 설정 모달 핸들러
+  const closePosPrinterModal = () => {
+    setPosPrinterModalOpen(false);
+  };
+  const openPosPrinterModalHandler = () => {
+    setPosPrinterModalOpen(true);
   };
 
   React.useEffect(() => {
@@ -1074,6 +1086,11 @@ export default function ResponsiveDrawer(props: OptionalProps) {
         isClose={closeCloseStoreModal}
       />
 
+      <PosPrinterSettingModal
+        isOpen={closePosPrinterModalOpen}
+        isClose={closePosPrinterModal}
+      />
+
       {/* 윈도우 닫기 컨펌 모달 */}
       <Modal
         aria-labelledby="transition-modal-title"
@@ -1217,6 +1234,16 @@ export default function ResponsiveDrawer(props: OptionalProps) {
             <Button variant='contained' color='primary' onClick={sendNotify}>NOTIFICATION</Button>
           </Box> */}
           <Box className={base.flexRowStartCenter}>
+            <Button
+              color="primary"
+              style={{
+                color: theme.palette.secondary.contrastText,
+                marginRight: 30,
+              }}
+              onClick={openPosPrinterModalHandler}
+            >
+              <Typography ml={0.5}>프린터설정</Typography>
+            </Button>
             {props.detail === "order_new" ||
             location.pathname === "/order_new" ||
             props.detail === "order_check" ||
