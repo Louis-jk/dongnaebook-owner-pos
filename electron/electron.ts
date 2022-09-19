@@ -72,8 +72,12 @@ function createWindow() {
 // 브라우저 메뉴창 없애기
 Menu.setApplicationMenu(null);
 
+// const device = new SerialPort({
+//   path: 'COM4',
+//   baudRate: 9600
+// })
 
-const options = { encoding: 'cp949' }
+const options = { encoding: 'cp949' } // cp949 or EUC-KR
 
 // Serialport 리스트
 ipcMain.on('requestPortsList', (event: any, data: any) => {
@@ -95,17 +99,19 @@ ipcMain.on('testPrint', (event: any, data: any) => {
     console.log('serialport error', err)
 
     printer
+    // .encode('EUC-KR')
     .size(0.1, 0.1)
     .font('A')
     .align('ct')
     .style('bu')
-    .text('동네북 영수증')
-    .newLine()
+    .text('동네북 주문전표')
     .align('LT')
     .style('NORMAL')
     .newLine()
     .size(0.01, 0.01)
     .text('테스트 인쇄')
+    .newLine()
+    .drawLine()
     .tableCustom([
       { text: '총금액', width: 0.4, align: 'LEFT' },
       { text: '2,000,000 원', width: 0.6, align: 'RIGHT' }
@@ -118,110 +124,93 @@ ipcMain.on('testPrint', (event: any, data: any) => {
   })
 })
 
-// const device = new SerialPort({
-//   path: 'COM4',
-//   baudRate: 9600
-// })
-
-/*
-const device = new escpos.SerialPort('COM4', { baudRate: 9600 });
-
-const options = { encoding: 'cp949' }
-const printer = new escpos.Printer(device, options)
-
-device.open(function(err: any) {
-  console.log('serialport error', err)
-
-  printer
-  .size(0.01, 0.01)
-  .font('A')
-  .align('ct')
-  .style('bu')
-  .text('동네북 영수증')
-  .newLine()
-  .align('LT')
-  .style('NORMAL')
-  .tableCustom([
-    { text: 'Date:', width: 0.2 },
-    { text: '2021-01-04 11:11', width: 0.6 }
-  ])
-  .style('NORMAL')
-  .tableCustom([
-    { text: 'Order ID:', width: 0.2 },
-    { text: '050-7866-2406', width: 0.6 }
-  ])
-  .style('NORMAL')
-  .tableCustom([
-    { text: '전화번호:', width: 0.2 },
-    { text: '200000000', width: 0.6, align: 'LEFT' }
-  ], { encoding: 'EUC-KR' })
-  .tableCustom([
-    { text: '메모:', width: 0.4 },
-    { text: '문앞에 두고 벨을 눌러주세요', width: 0.6 }
-  ], 'CP949')
-  .drawLine()
-  .newLine()
-  .tableCustom([
-    { text: '기사님 이름:', width: 0.4 },
-    { text: '기사이름', width: 0.6 }
-  ], 'CP949')
-  .tableCustom([
-    { text: '기사님 번호:', width: 0.4 },
-    { text: '010-1234-5678', width: 0.6 }
-  ], 'CP949')
-  .drawLine()
-  .newLine()
-  .tableCustom([
-    { text: '합계', width: 0.4, align: 'LEFT' },
-    { text: '2,000,000 원', width: 0.6, align: 'RIGHT' }
-  ], 'CP949')
-  .tableCustom([
-    { text: '배송료(11.2km)', width: 0.4, align: 'LEFT' },
-    { text: '2,000 원', width: 0.6, align: 'RIGHT' }
-  ], 'CP949')
-  .tableCustom([
-    { text: '수수료', width: 0.4, align: 'LEFT' },
-    { text: '-0 원', width: 0.6, align: 'RIGHT' }
-  ], 'CP949')
-  .drawLine()
-  .newLine()
-  .tableCustom([
-    { text: '총금액', width: 0.4, align: 'LEFT' },
-    { text: '2,000,000 원', width: 0.6, align: 'RIGHT' }
-  ], 'CP949')
-  .newLine()
-  .newLine()
-  .newLine()
-  .cut()
-  .close();
+// serialport 점표 인쇄
+ipcMain.on('orderPrint', (event: any, data: any) => {
   
-});
-*/
+  // orderAddress02
+  const {port, baudRate, orderId, orderPaymentType, orderType, orderAddress01, orderAddress03, orderAddressOld, orderContactNumber, requestToStore, requestToOfficer, requestToItem, orderMenus, totalOrderAmount, deliveryTip, point, coupon, totalPaymentAmount, orderStore, orderDateTime, origin } = data;
 
-  // printer
-  //   .font('a')
-  //   .align('ct')
-  //   .style('bu')
-  //   .size(1, 1)
-  //   .text('The quick brown fox jumps over the lazy dog')
-  //   .text('테스트 영수증 프린터')
-  //   .cut()
-  //   .close();
-  //   // .barcode('1234567', 'EAN8')
-  //   // .table(["One", "Two", "Three"])
-  //   // .tableCustom(
-  //   //   [
-  //   //     { text:"Left", align:"LEFT", width:0.33, style: 'B' },
-  //   //     { text:"Center", align:"CENTER", width:0.33},
-  //   //     { text:"Right", align:"RIGHT", width:0.33 }
-  //   //   ],
-  //   //   { encoding: 'cp857', size: [1, 1] } // Optional
-  //   // )
-  //   // .qrimage('https://github.com/song940/node-escpos', function(err: any){
-  //   //   this.cut();
-  //   //   this.close();
-  //   // });
-// })
+
+  const device = new escpos.SerialPort(port, { baudRate });
+  const printer = new escpos.Printer(device, options)
+  device.open(function(err: any) {
+
+    printer
+    .encode('EUC-KR')
+    .size(0.1, 0.1)
+    .font('a')
+    .align('ct')
+    .style('normal')
+    .text(`${orderType} 주문전표`)
+    .newLine()
+    .newLine()
+    .size(0.01, 0.01)
+    .align('lt')
+    .table(['주문번호', `${orderId}`])
+    .table(['결제방식', `${orderPaymentType}`])
+    .drawLine()
+    .text(`${orderType} 주소`)
+    .text(`${orderAddress01} ${orderAddress03}`)
+    .text(`${orderAddressOld}`)
+    .text('연락처')
+    .text(`${orderContactNumber}`)
+    .drawLine()
+    .text('요청사항')
+    .table(['사장님', `${requestToStore}`])
+    .table(['기사님', `${requestToOfficer}`])
+    .table(['일회용 수저, 포크', `${requestToItem}`]) 
+    .drawLine()
+    .table(["메뉴명", "수량", "금액"])
+    .drawLine();
+
+    orderMenus.forEach((menus: any, index: number) => {
+      printer
+      .encode('EUC-KR')
+      .table([`${menus.it_name}`, `${menus.ct_qty}개`, `${menus.sum_price}원`]);
+      
+      if(menus.cart_option && menus.cart_option.length > 0) {
+        menus.cart_option.forEach((defaultOption: any, index: number) => {
+          printer
+            .text(`└ 기본옵션 : ${defaultOption.ct_option}`)
+            .text(`└ 옵션금액 : ${defaultOption.io_price}원`)
+        })
+      }
+
+      if(menus.cart_add_option && menus.cart_add_option.length > 0) {
+        menus.cart_add_option.forEach((addOption: any, index: number) => {
+          printer
+            .text(`└ 추가옵션 : ${addOption.ct_option}`)
+            .text(`└ 옵션금액 : ${addOption.io_price}원`)
+        })
+      }
+
+      printer.newLine()
+    });
+
+    printer
+    .encode('EUC-KR')
+    .drawLine()    
+    .text('결제정보')
+    .newLine()
+    .table(['총 주문금액', `${totalOrderAmount}`])
+    .table(['배달 팁', `${deliveryTip}`])
+    .table(['포인트', `${point}`])
+    .table(['쿠폰', `${coupon}`])
+    .drawLine()
+    .table(['합계(결제완료)', `${totalPaymentAmount}`])
+    .drawLine()
+    .table(['주문매장', `${orderStore}`])
+    .table(['주문번호', `${orderId}`])
+    .table(['주문일시', `${orderDateTime}`])
+    .drawLine()
+    .text('원산지')
+    .text(`${origin}`)
+    .newLine()
+    .newLine()
+    .cut()
+    .close();
+  })
+})
 
 // 프린트 기능
 ipcMain.on("pos_print", (event, data) => {

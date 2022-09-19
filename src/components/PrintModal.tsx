@@ -29,6 +29,37 @@ const PrintModal = (props: any) => {
 
   const base = baseStyles();
 
+  // SerialPort 프린트 출력
+  const serialPortPrint = () => {
+
+    let data = {
+      port: 'COM4',
+      baudRate: 9600,
+      orderId: order.order_id,
+      orderPaymentType: order.od_settle_case,
+      orderType: order.od_type,
+      orderAddress01: order.order_addr1,
+      orderAddress02: order.order_addr2,
+      orderAddress03: order.order_addr3,
+      orderAddressOld: order.od_addr_jibeon,
+      orderContactNumber: order.order_safety_number && order.od_settle_type !== 'cash' ? `${order.order_safety_number}${order.order_safety_str}` : Api.phoneFomatter(order.order_hp).toString(),
+      requestToStore: order.order_seller ? order.order_seller : '요청사항이 없습니다.',
+      requestToOfficer: order.order_officer ? order.order_officer : '요청사항이 없습니다.',
+      requestToItem: order.od_no_spoon == '1' ? '필요없음' : '필요함',
+      orderMenus: product,
+      totalOrderAmount: `${Api.comma(order.odder_cart_price).toString()}원`,
+      deliveryTip: `${Api.comma(order.order_cost).toString()}원`,
+      point: `${Api.comma(order.order_point).toString()}원`,
+      coupon: `${Api.comma(order.order_coupon_store).toString()}원`,
+      totalPaymentAmount: `${Api.comma(order.order_sumprice).toString()}원`,
+      orderStore: store.mb_company,
+      orderDateTime: `${moment(order.od_time, 'YYYY-MM-DD HH:mm:ss').format('YYYY. MM. DD  HH:mm')}`,
+      origin: store.do_jumju_origin
+    }
+
+    appRuntime.send('orderPrint', data);
+  }
+
   // 프린트 출력 부분
   const componentRef = React.useRef(null);
 
@@ -417,8 +448,16 @@ const PrintModal = (props: any) => {
       }
     })
   }
+
   const printHandler = () => {
+    serialPortPrint(); // Serial 통신 프린터 출력
+    return;
+
+    
+    /*
+    // 기존 일렉트론 프린터 출력 방식 (프린터 드라이버 설치필요)
     handlePrint().then(() => handlePrint02()).catch((err: any) => console.error(err));
+    */
   }
 
   return (
