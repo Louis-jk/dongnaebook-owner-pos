@@ -4,7 +4,7 @@ const fs = require("fs");
 const os = require("os");
 const url = require("url");
 const { setup: setupPushReceiver } = require("electron-push-receiver");
-const { SerialPort } = require('serialport')
+const SerialPort = require('serialport')
 const escpos = require('escpos')
 escpos.SerialPort = require('escpos-serialport');
 import * as isDev from "electron-is-dev";
@@ -72,10 +72,58 @@ function createWindow() {
 // 브라우저 메뉴창 없애기
 Menu.setApplicationMenu(null);
 
+
+const options = { encoding: 'cp949' }
+
+// Serialport 리스트
+ipcMain.on('requestPortsList', (event: any, data: any) => {
+  console.log('serialPortsList called!')
+  SerialPort.list().then((ports: any, err: any) => {
+    console.log('ports ?', ports)
+    event.sender.send('responsePortList', ports)
+  })
+})
+
+// serialport 테스트 인쇄
+ipcMain.on('testPrint', (event: any, data: any) => {
+  
+  const {port, baudRate} = data;
+
+  const device = new escpos.SerialPort(port, { baudRate });
+  const printer = new escpos.Printer(device, options)
+  device.open(function(err: any) {
+    console.log('serialport error', err)
+
+    printer
+    .size(0.1, 0.1)
+    .font('A')
+    .align('ct')
+    .style('bu')
+    .text('동네북 영수증')
+    .newLine()
+    .align('LT')
+    .style('NORMAL')
+    .newLine()
+    .size(0.01, 0.01)
+    .text('테스트 인쇄')
+    .tableCustom([
+      { text: '총금액', width: 0.4, align: 'LEFT' },
+      { text: '2,000,000 원', width: 0.6, align: 'RIGHT' }
+    ])
+    .newLine()
+    .newLine()
+    .newLine()
+    .cut()
+    .close();
+  })
+})
+
 // const device = new SerialPort({
 //   path: 'COM4',
 //   baudRate: 9600
 // })
+
+/*
 const device = new escpos.SerialPort('COM4', { baudRate: 9600 });
 
 const options = { encoding: 'cp949' }
@@ -148,6 +196,7 @@ device.open(function(err: any) {
   .close();
   
 });
+*/
 
   // printer
   //   .font('a')

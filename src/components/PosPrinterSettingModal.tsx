@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import clsx from "clsx";
@@ -18,6 +18,7 @@ import * as storeAction from "../redux/actions/storeAction";
 import Api from "../Api";
 import { ButtonGroup, Select } from "@material-ui/core";
 import { Button, FormControl, InputLabel, MenuItem, SelectChangeEvent } from "@mui/material";
+import appRuntime from "../appRuntime";
 
 interface IProps {
   isOpen: boolean;
@@ -32,12 +33,28 @@ const BAUD_RATE = [110, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200
 
 export default function PosPrinterSettingModal(props: IProps) {
   const base = baseStyles();
-  const dispatch = useDispatch();
-  const { mt_jumju_key } = useSelector((state: any) => state.login);
-  const { allStore, closedStore } = useSelector((state: any) => state.store);
+  // const dispatch = useDispatch();
+  // const { mt_jumju_key } = useSelector((state: any) => state.login);
+  // const { allStore, closedStore } = useSelector((state: any) => state.store);
 
+  const [getPortsList, setPortsList] = useState([]);
   const [port, setPort] = useState('');
   const [baudRate, setBaudRate] = useState('');
+
+  const getSerialPorts = () => {
+    appRuntime.send('requestPortsList', null);
+  }
+
+  appRuntime.on('responsePortList', (event: any, data: any) => {
+    console.log('responsePortList data', data)
+    setPortsList(data);
+  })
+
+  useEffect(() => {
+    getSerialPorts();
+
+    return () => getSerialPorts();
+  }, []);
 
 
   const changePortHandler = (event: SelectChangeEvent) => {
@@ -50,6 +67,13 @@ export default function PosPrinterSettingModal(props: IProps) {
 
   const printTest = () => {
     console.log('print test!')
+    console.log('select port ::', port);
+    console.log('select baud rate ::', baudRate);
+    let data = {
+      port,
+      baudRate
+    }
+    appRuntime.send('testPrint', data);
   }
 
   return (
@@ -108,8 +132,9 @@ export default function PosPrinterSettingModal(props: IProps) {
                   label="Port"
                   onChange={changePortHandler}
                 >
-                  <MenuItem value="COM3">COM3</MenuItem>
-                  <MenuItem value="COM4">COM4</MenuItem>
+                  {getPortsList?.map((port: any, index: number) => (
+                    <MenuItem key={`port-${index}`} value={port.path}>{port.path}</MenuItem>  
+                  ))}
                 </Select>
               </FormControl>
             </Box>
