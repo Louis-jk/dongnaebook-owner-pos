@@ -11,10 +11,12 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import { styled } from "@material-ui/core/styles";
 import Switch, { SwitchProps } from "@material-ui/core/Switch";
+import toast, { Toaster } from 'react-hot-toast';
 
 // Local Component
 import { theme, baseStyles, ModalCancelButton } from "../styles/base";
 import * as storeAction from "../redux/actions/storeAction";
+import * as printerSettingAction from '../redux/actions/printerSettingAction';
 import Api from "../Api";
 import { ButtonGroup, Select } from "@material-ui/core";
 import { Button, FormControl, InputLabel, MenuItem, SelectChangeEvent } from "@mui/material";
@@ -33,13 +35,11 @@ const BAUD_RATE = [110, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200
 
 export default function PosPrinterSettingModal(props: IProps) {
   const base = baseStyles();
-  // const dispatch = useDispatch();
-  // const { mt_jumju_key } = useSelector((state: any) => state.login);
+  const dispatch = useDispatch();
+  const { port, baudRate } = useSelector((state: any) => state.printerSetting);
   // const { allStore, closedStore } = useSelector((state: any) => state.store);
 
   const [getPortsList, setPortsList] = useState([]);
-  const [port, setPort] = useState('');
-  const [baudRate, setBaudRate] = useState('');
 
   const getSerialPorts = () => {
     appRuntime.send('requestPortsList', null);
@@ -58,11 +58,15 @@ export default function PosPrinterSettingModal(props: IProps) {
 
 
   const changePortHandler = (event: SelectChangeEvent) => {
-    setPort(event.target.value as string)
+    // setPort(event.target.value as string)
+    let selectPort = event.target.value as string
+    dispatch(printerSettingAction.updatePrinterPort(selectPort))
   }
 
   const changeBaudRateHandler = (event: SelectChangeEvent) => {
-    setBaudRate(event.target.value as string)
+    // setBaudRate(event.target.value as string)
+    let selectBaudRate = event.target.value as string
+    dispatch(printerSettingAction.updatePrinterBaudRate(selectBaudRate))
   }
 
   const printTest = () => {
@@ -76,7 +80,31 @@ export default function PosPrinterSettingModal(props: IProps) {
     appRuntime.send('testPrint', data);
   }
 
-  return (
+  // 프린터 설정 리덕스 연동
+  const setPrinterToRedux = () => {
+
+    if(port !== '' && baudRate !== '') {
+      let data = {
+        port,
+        baudRate
+      }
+  
+      dispatch(printerSettingAction.updatePrinter(data))
+      
+      toast.success('저장하였습니다.', {
+        duration: 4000,
+        position: 'bottom-center',
+      });
+      
+    } else {
+      toast.error('Port와 BaudRate를 지정해주세요.', {
+        duration: 4000,
+        position: 'bottom-center'
+      });
+    }   
+  }
+
+  return (    
     <Modal
       aria-labelledby="transition-modal-title"
       aria-describedby="transition-modal-description"
@@ -129,7 +157,6 @@ export default function PosPrinterSettingModal(props: IProps) {
                   labelId="demo-simple-select-helper-label"
                   id="demo-simple-select-helper"
                   value={port}
-                  label="Port"
                   onChange={changePortHandler}
                 >
                   {getPortsList?.map((port: any, index: number) => (
@@ -149,14 +176,13 @@ export default function PosPrinterSettingModal(props: IProps) {
                 }}
                 sx={{ mr: 2 }}
               >
-                BoudRate
+                BaudRate
               </Typography>
               <FormControl sx={{ minWidth: 200 }}>
                 <Select
                   labelId="demo-simple-select-helper-label"
                   id="demo-simple-select-helper"
                   value={baudRate}
-                  label="BoudRate"
                   onChange={changeBaudRateHandler}
                 >
                   {BAUD_RATE.map((rate, index) => (
@@ -191,6 +217,7 @@ export default function PosPrinterSettingModal(props: IProps) {
                 fontWeight: "bold",
                 boxShadow: "none",
               }}
+              onClick={setPrinterToRedux}
             >
               저장
             </Button>
@@ -211,6 +238,6 @@ export default function PosPrinterSettingModal(props: IProps) {
           </ModalCancelButton>
         </Box>
       </Fade>
-    </Modal>
+    </Modal>    
   );
 }
