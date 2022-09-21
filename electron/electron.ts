@@ -38,7 +38,7 @@ function createWindow() {
       preload: path.join(
         app.getAppPath(),
         isDev ? "/preload.js" : "/build/preload.js"
-      ), // 빌드시 /build/preload.js 로 변경 필요
+      )
     },
   });
 
@@ -49,7 +49,7 @@ function createWindow() {
     pathname: path.join(
       app.getAppPath(),
       isDev ? "/index.html" : "/build/index.html"
-    ), // 빌드시 /build/index.html 로 변경 필요
+    ), 
     slashes: true,
   });
 
@@ -60,7 +60,7 @@ function createWindow() {
 
   if (isDev) {
     mainWindow.loadURL("http://localhost:3000");
-    mainWindow.webContents.openDevTools(); // // 개발자 툴 오픈
+    mainWindow.webContents.openDevTools(); // 개발자 툴 오픈
   } else {
     mainWindow.loadURL(indexPath);
   }
