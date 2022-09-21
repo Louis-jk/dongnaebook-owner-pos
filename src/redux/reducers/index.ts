@@ -6,6 +6,7 @@ import loginReducer from './loginReducer';
 import OrderDetailReducer from './OrderDetailReducer';
 import allStoreReducer from './allStoreReducer';
 import orderReducer from './orderReducer';
+import printerSettingReducer from './printerSettingReducer';
 import checkOrderReducer from './checkOrderReducer';
 import menuControl from './menuControl';
 // import indexReducer from './indexReducer';
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   orderDetail: OrderDetailReducer,
   store: allStoreReducer,
   order: orderReducer,
+  printerSetting: printerSettingReducer,
   checkOrder: checkOrderReducer,
   menuContr: menuControl,
   // index: indexReducer,
