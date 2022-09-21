@@ -468,11 +468,11 @@ export default function ResponsiveDrawer(props: OptionalProps) {
           <Button
             onClick={() => menuControlHandler("order")}
             style={{
-              background: selectType === "order" ? "#ffc739" : "#444259",
+              background: selectType === "order" ? theme.palette.primary.main : theme.palette.secondary.light,
             }}
           >
             <Typography
-              style={{ color: selectType === "order" ? "#1c1b30" : "#ffc739" }}
+              style={{ color: selectType === "order" ? theme.palette.secondary.main : theme.palette.primary.main }}
             >
               주문
             </Typography>
@@ -480,11 +480,11 @@ export default function ResponsiveDrawer(props: OptionalProps) {
           <Button
             onClick={() => menuControlHandler("store")}
             style={{
-              background: selectType === "store" ? "#ffc739" : "#444259",
+              background: selectType === "store" ? theme.palette.primary.main : theme.palette.secondary.light,
             }}
           >
             <Typography
-              style={{ color: selectType === "store" ? "#1c1b30" : "#ffc739" }}
+              style={{ color: selectType === "store" ? theme.palette.secondary.main : theme.palette.primary.main }}
             >
               매장
             </Typography>
@@ -520,15 +520,15 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   newOrder.length > 0 &&
                   curPathName !== "order_new" &&
                   props.detail !== "order_new"
-                    ? "#ffc739"
+                    ? theme.palette.primary.main
                     : newOrder.length > 0 &&
                       (curPathName === "order_new" ||
                         props.detail === "order_new")
                     ? "#1c1b30"
-                    : newOrder.length == 0 &&
+                    : newOrder.length === 0 &&
                       (curPathName === "order_new" ||
                         props.detail === "order_new")
-                    ? "#1c1b30"
+                    ? theme.palette.secondary.main
                     : "#fff",
               }}
             >
@@ -543,15 +543,15 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   newOrder.length > 0 &&
                   curPathName !== "order_new" &&
                   props.detail !== "order_new"
-                    ? "#ffc739"
+                    ? theme.palette.primary.main
                     : newOrder.length > 0 &&
                       (curPathName === "order_new" ||
                         props.detail === "order_new")
-                    ? "#1c1b30"
-                    : newOrder.length == 0 &&
+                    ? theme.palette.secondary.main
+                    : newOrder.length === 0 &&
                       (curPathName === "order_new" ||
                         props.detail === "order_new")
-                    ? "#1c1b30"
+                    ? theme.palette.secondary.main
                     : "#fff",
               }}
             >
@@ -589,17 +589,17 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   curPathName !== "order_check" &&
                   props.detail !== "order_check_delivery" &&
                   props.detail !== "order_check_takeout"
-                    ? "#ffc739"
+                    ? theme.palette.primary.main
                     : checkOrder.length > 0 &&
                       (curPathName === "order_check" ||
                         props.detail === "order_check_delivery" ||
                         props.detail === "order_check_takeout")
-                    ? "#1c1b30"
-                    : checkOrder.length == 0 &&
+                    ? theme.palette.secondary.main
+                    : checkOrder.length === 0 &&
                       (curPathName === "order_check" ||
                         props.detail === "order_check_delivery" ||
                         props.detail === "order_check_takeout")
-                    ? "#1c1b30"
+                    ? theme.palette.secondary.main
                     : "#fff",
               }}
             >
@@ -615,17 +615,17 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   curPathName !== "order_check" &&
                   props.detail !== "order_check_delivery" &&
                   props.detail !== "order_check_takeout"
-                    ? "#ffc739"
+                    ? theme.palette.primary.main
                     : checkOrder.length > 0 &&
                       (curPathName === "order_check" ||
                         props.detail === "order_check_delivery" ||
                         props.detail === "order_check_takeout")
-                    ? "#1c1b30"
-                    : checkOrder.length == 0 &&
+                    ? theme.palette.secondary.main
+                    : checkOrder.length === 0 &&
                       (curPathName === "order_check" ||
                         props.detail === "order_check_delivery" ||
                         props.detail === "order_check_takeout")
-                    ? "#1c1b30"
+                    ? theme.palette.secondary.main
                     : "#fff",
               }}
             >
@@ -660,15 +660,15 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   deliveryOrder.length > 0 &&
                   curPathName !== "order_delivery" &&
                   props.detail !== "order_delivery"
-                    ? "#ffc739"
+                    ? theme.palette.primary.main
                     : deliveryOrder.length > 0 &&
                       (curPathName === "order_delivery" ||
                         props.detail === "order_delivery")
-                    ? "#1c1b30"
-                    : deliveryOrder.length == 0 &&
+                    ? theme.palette.secondary.main
+                    : deliveryOrder.length === 0 &&
                       (curPathName === "order_delivery" ||
                         props.detail === "order_delivery")
-                    ? "#1c1b30"
+                    ? theme.palette.secondary.main
                     : "#fff",
               }}
             >
@@ -683,15 +683,15 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   deliveryOrder.length > 0 &&
                   curPathName !== "order_delivery" &&
                   props.detail !== "order_delivery"
-                    ? "#ffc739"
+                    ? theme.palette.primary.main
                     : deliveryOrder.length > 0 &&
                       (curPathName === "order_delivery" ||
                         props.detail === "order_delivery")
-                    ? "#1c1b30"
-                    : deliveryOrder.length == 0 &&
+                    ? theme.palette.secondary.main
+                    : deliveryOrder.length === 0 &&
                       (curPathName === "order_delivery" ||
                         props.detail === "order_delivery")
-                    ? "#1c1b30"
+                    ? theme.palette.secondary.main
                     : "#fff",
               }}
             >
@@ -724,15 +724,15 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   doneOrder.length > 0 &&
                   curPathName !== "order_done" &&
                   props.detail !== "order_done"
-                    ? "#ffc739"
+                    ? theme.palette.primary.main
                     : doneOrder.length > 0 &&
                       (curPathName === "order_done" ||
                         props.detail === "order_done")
-                    ? "#1c1b30"
-                    : doneOrder.length == 0 &&
+                    ? theme.palette.secondary.main
+                    : doneOrder.length === 0 &&
                       (curPathName === "order_done" ||
                         props.detail === "order_done")
-                    ? "#1c1b30"
+                    ? theme.palette.secondary.main
                     : "#fff",
               }}
             >
@@ -747,15 +747,15 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   doneOrder.length > 0 &&
                   curPathName !== "order_done" &&
                   props.detail !== "order_done"
-                    ? "#ffc739"
+                    ? theme.palette.primary.main
                     : doneOrder.length > 0 &&
                       (curPathName === "order_done" ||
                         props.detail === "order_done")
-                    ? "#1c1b30"
-                    : doneOrder.length == 0 &&
+                    ? theme.palette.secondary.main
+                    : doneOrder.length === 0 &&
                       (curPathName === "order_done" ||
                         props.detail === "order_done")
-                    ? "#1c1b30"
+                    ? theme.palette.secondary.main
                     : "#fff",
               }}
             >
