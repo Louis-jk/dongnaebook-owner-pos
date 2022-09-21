@@ -1,5 +1,6 @@
 import { app, BrowserWindow, Menu, ipcMain } from "electron";
 import * as path from "path";
+import * as isDev from "electron-is-dev";
 const fs = require("fs");
 const os = require("os");
 const url = require("url");
@@ -7,7 +8,54 @@ const { setup: setupPushReceiver } = require("electron-push-receiver");
 const SerialPort = require('serialport')
 const escpos = require('escpos')
 escpos.SerialPort = require('escpos-serialport');
-import * as isDev from "electron-is-dev";
+
+const sqlite3 = require('sqlite3').verbose();
+// const db = new sqlite3.Database(':memory:');
+
+const db = new sqlite3.Database('./database/printerSetting.db', (err: any) => {
+  if(err) {
+    return console.error(err.message);
+  }
+  console.log('Connected to the printerSetting database');
+});
+
+db.serialize(() => {
+  db.run("CREATE TABLE lorem (info TEXT)")
+
+  const stmt = db.prepare("INSERT INTO lorem VALUES (?)");
+
+  for (let i = 0; i < 10; i++) {
+      stmt.run("Ipsum " + i);
+  }
+  stmt.finalize();
+
+  db.each("SELECT rowid AS id, info FROM lorem", (err: any, row: any) => {
+      console.log(row.id + ": " + row.info);
+  });
+})
+
+db.close((err: any) => {
+  if(err) {
+    return console.error(err.message);
+  }
+  console.log('Close the database connection.');
+})
+
+// db.serialize(() => {
+//   db.run("CREATE TABLE lorem (info TEXT)");
+
+//   const stmt = db.prepare("INSERT INTO lorem VALUES (?)");
+//   for (let i = 0; i < 10; i++) {
+//       stmt.run("Ipsum " + i);
+//   }
+//   stmt.finalize();
+
+//   db.each("SELECT rowid AS id, info FROM lorem", (err: any, row: any) => {
+//       console.log(row.id + ": " + row.info);
+//   });
+// });
+
+// db.close();
 
 let mainWindow: Electron.BrowserWindow | null;
 
