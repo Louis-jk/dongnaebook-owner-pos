@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import clsx from "clsx";
+
 
 // Material UI Components
 import Modal from "@material-ui/core/Modal";
@@ -9,17 +9,13 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import { styled } from "@material-ui/core/styles";
-import Switch, { SwitchProps } from "@material-ui/core/Switch";
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import { ButtonGroup, Select } from "@material-ui/core";
+import { Button, FormControl, MenuItem, SelectChangeEvent } from "@mui/material";
 
 // Local Component
 import { theme, baseStyles, ModalCancelButton } from "../styles/base";
-import * as storeAction from "../redux/actions/storeAction";
 import * as printerSettingAction from '../redux/actions/printerSettingAction';
-import Api from "../Api";
-import { ButtonGroup, Select } from "@material-ui/core";
-import { Button, FormControl, InputLabel, MenuItem, SelectChangeEvent } from "@mui/material";
 import appRuntime from "../appRuntime";
 
 interface IProps {
@@ -27,28 +23,25 @@ interface IProps {
   isClose: () => void;
 }
 
-interface Object {
-  [key: string]: string;
-}
-
 const BAUD_RATE = [110, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200];
 
 export default function PosPrinterSettingModal(props: IProps) {
+  
   const base = baseStyles();
   const dispatch = useDispatch();
   const { port, baudRate } = useSelector((state: any) => state.printerSetting);
-  // const { allStore, closedStore } = useSelector((state: any) => state.store);
-
   const [getPortsList, setPortsList] = useState([]);
 
+
+  // SerialPort 통신 및 포트 가져오기
   const getSerialPorts = () => {
     appRuntime.send('requestPortsList', null);
-  }
 
-  appRuntime.on('responsePortList', (event: any, data: any) => {
-    console.log('responsePortList data', data)
-    setPortsList(data);
-  })
+    appRuntime.on('responsePortList', (event: any, data: any) => {
+      console.log('responsePortList data', data)
+      setPortsList(data);
+    })
+  }
 
   useEffect(() => {
     getSerialPorts();
@@ -70,9 +63,6 @@ export default function PosPrinterSettingModal(props: IProps) {
   }
 
   const printTest = () => {
-    console.log('print test!')
-    console.log('select port ::', port);
-    console.log('select baud rate ::', baudRate);
     let data = {
       port,
       baudRate
@@ -110,7 +100,6 @@ export default function PosPrinterSettingModal(props: IProps) {
       aria-describedby="transition-modal-description"
       className={base.modal}
       open={props.isOpen}
-      // onClose={props.isClose}
       closeAfterTransition
       BackdropComponent={Backdrop}
       BackdropProps={{
