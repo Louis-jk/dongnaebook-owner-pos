@@ -26,6 +26,7 @@ import appRuntime from '../appRuntime';
 const PrintModal = (props: any) => {
   const { mt_store, do_jumju_origin_use } = useSelector((state: any) => state.login);
   const { order, product, store } = useSelector((state: any) => state.orderDetail);
+  const { port, baudRate } = useSelector((state: any) => state.printerSetting);
 
   const base = baseStyles();
 
@@ -33,8 +34,8 @@ const PrintModal = (props: any) => {
   const serialPortPrint = () => {
 
     let data = {
-      port: 'COM4',
-      baudRate: 9600,
+      port: port,
+      baudRate: Number(baudRate),
       orderId: order.order_id,
       orderPaymentType: order.od_settle_case,
       orderType: order.od_type,
@@ -45,7 +46,7 @@ const PrintModal = (props: any) => {
       orderContactNumber: order.order_safety_number && order.od_settle_type !== 'cash' ? `${order.order_safety_number}${order.order_safety_str}` : Api.phoneFomatter(order.order_hp).toString(),
       requestToStore: order.order_seller ? order.order_seller : '요청사항이 없습니다.',
       requestToOfficer: order.order_officer ? order.order_officer : '요청사항이 없습니다.',
-      requestToItem: order.od_no_spoon == '1' ? '필요없음' : '필요함',
+      requestToItem: order.od_no_spoon === '1' || order.od_no_spoon === 1 ? '필요없음' : '필요함',
       orderMenus: product,
       totalOrderAmount: `${Api.comma(order.odder_cart_price).toString()}원`,
       deliveryTip: `${Api.comma(order.order_cost).toString()}원`,
