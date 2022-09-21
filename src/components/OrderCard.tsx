@@ -228,7 +228,9 @@ export default function OrderCard(props: OrderProps) {
                   backgroundColor:
                     order.od_type === "배달"
                       ? theme.palette.primary.main
-                      : theme.palette.info.light,
+                      : order.od_type === "포장" ?
+                        theme.palette.info.light
+                        : '#ffd24c'
                 }}
               >
                 <Typography
@@ -241,7 +243,9 @@ export default function OrderCard(props: OrderProps) {
                     ? "배달"
                     : order.od_type === "포장"
                     ? "포장"
-                    : "식사"}
+                    : order.od_type === "식사"
+                    ? "식사"
+                    : null}
                 </Typography>
               </Box>
               {/* 배달주문 / 포장주문 마커 */}
