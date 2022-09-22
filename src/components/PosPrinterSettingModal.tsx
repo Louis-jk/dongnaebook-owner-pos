@@ -2,20 +2,24 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import clsx from "clsx";
 
-
 // Material UI Components
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import { ButtonGroup, Select } from "@material-ui/core";
-import { Button, FormControl, MenuItem, SelectChangeEvent } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  MenuItem,
+  SelectChangeEvent,
+} from "@mui/material";
 
 // Local Component
 import { theme, baseStyles, ModalCancelButton } from "../styles/base";
-import * as printerSettingAction from '../redux/actions/printerSettingAction';
+import * as printerSettingAction from "../redux/actions/printerSettingAction";
 import appRuntime from "../appRuntime";
 
 interface IProps {
@@ -23,25 +27,27 @@ interface IProps {
   isClose: () => void;
 }
 
-const BAUD_RATE = [110, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200];
+const PORT_LIST = ["COM1", "COM2", "COM3", "COM4", "COM5"];
+const BAUD_RATE = [
+  110, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200,
+];
 
 export default function PosPrinterSettingModal(props: IProps) {
-  
   const base = baseStyles();
   const dispatch = useDispatch();
   const { port, baudRate } = useSelector((state: any) => state.printerSetting);
   const [getPortsList, setPortsList] = useState([]);
 
-
   // SerialPort 통신 및 포트 가져오기
   const getSerialPorts = () => {
-    appRuntime.send('requestPortsList', null);
+    appRuntime.send("requestPortsList", null);
+    appRuntime.send("initPrintSettings", null);
 
-    appRuntime.on('responsePortList', (event: any, data: any) => {
-      console.log('responsePortList data', data)
+    appRuntime.on("responsePortList", (event: any, data: any) => {
+      console.log("responsePortList data", data);
       setPortsList(data);
-    })
-  }
+    });
+  };
 
   useEffect(() => {
     getSerialPorts();
@@ -49,52 +55,55 @@ export default function PosPrinterSettingModal(props: IProps) {
     return () => getSerialPorts();
   }, []);
 
-
   const changePortHandler = (event: SelectChangeEvent) => {
     // setPort(event.target.value as string)
-    let selectPort = event.target.value as string
-    dispatch(printerSettingAction.updatePrinterPort(selectPort))
-  }
+    let selectPort = event.target.value as string;
+    dispatch(printerSettingAction.updatePrinterPort(selectPort));
+  };
 
   const changeBaudRateHandler = (event: SelectChangeEvent) => {
     // setBaudRate(event.target.value as string)
-    let selectBaudRate = event.target.value as string
-    dispatch(printerSettingAction.updatePrinterBaudRate(selectBaudRate))
-  }
+    let selectBaudRate = event.target.value as string;
+    dispatch(printerSettingAction.updatePrinterBaudRate(selectBaudRate));
+  };
 
   const printTest = () => {
     let data = {
       port,
-      baudRate
-    }
-    appRuntime.send('testPrint', data);
-  }
+      baudRate,
+    };
+    appRuntime.send("testPrint", data);
+  };
 
   // 프린터 설정 리덕스 연동
   const setPrinterToRedux = () => {
-
-    if(port !== '' && baudRate !== '') {
+    if (port !== "" && baudRate !== "") {
       let data = {
         port,
-        baudRate
-      }
-  
-      dispatch(printerSettingAction.updatePrinter(data))
-      
-      toast.success('저장하였습니다.', {
-        duration: 4000,
-        position: 'bottom-center',
-      });
-      
-    } else {
-      toast.error('Port와 BaudRate를 지정해주세요.', {
-        duration: 4000,
-        position: 'bottom-center'
-      });
-    }   
-  }
+        baudRate,
+      };
 
-  return (    
+      let data02 = {
+        port,
+        baudRate: Number(baudRate),
+      };
+
+      dispatch(printerSettingAction.updatePrinter(data));
+      appRuntime.send("savingPrintSettings", data02);
+
+      toast.success("저장하였습니다.", {
+        duration: 4000,
+        position: "bottom-center",
+      });
+    } else {
+      toast.error("Port와 BaudRate를 지정해주세요.", {
+        duration: 4000,
+        position: "bottom-center",
+      });
+    }
+  };
+
+  return (
     <Modal
       aria-labelledby="transition-modal-title"
       aria-describedby="transition-modal-description"
@@ -148,8 +157,15 @@ export default function PosPrinterSettingModal(props: IProps) {
                   value={port}
                   onChange={changePortHandler}
                 >
-                  {getPortsList?.map((port: any, index: number) => (
-                    <MenuItem key={`port-${index}`} value={port.path}>{port.path}</MenuItem>  
+                  {/* {getPortsList?.map((port: any, index: number) => (
+                    <MenuItem key={`port-${index}`} value={port.path}>
+                      {port.path}
+                    </MenuItem>
+                  ))} */}
+                  {PORT_LIST.map((port: string, index: number) => (
+                    <MenuItem key={`port-${index}`} value={port}>
+                      {port}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -175,7 +191,9 @@ export default function PosPrinterSettingModal(props: IProps) {
                   onChange={changeBaudRateHandler}
                 >
                   {BAUD_RATE.map((rate, index) => (
-                    <MenuItem key={index} value={rate}>{rate}</MenuItem>
+                    <MenuItem key={index} value={rate}>
+                      {rate}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
@@ -227,6 +245,6 @@ export default function PosPrinterSettingModal(props: IProps) {
           </ModalCancelButton>
         </Box>
       </Fade>
-    </Modal>    
+    </Modal>
   );
 }
