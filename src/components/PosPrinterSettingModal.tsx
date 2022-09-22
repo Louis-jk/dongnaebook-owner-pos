@@ -163,11 +163,6 @@ export default function PosPrinterSettingModal(props: IProps) {
                           {port.path}
                         </MenuItem>
                       ))}
-                      {/* {PORT_LIST.map((port: string, index: number) => (
-                    <MenuItem key={`port-${index}`} value={port}>
-                      {port}
-                    </MenuItem>
-                  ))} */}
                     </Select>
                   </FormControl>
                 </Box>
