@@ -79,6 +79,61 @@ function createWindow() {
 Menu.setApplicationMenu(null);
 
 const sqlite3 = require("sqlite3").verbose();
+
+// 프린터 DB가 있을 시, DB에 레코드값을 있을 시 데이터 값 반환
+ipcMain.on("getPrinterSettings", (event: any, data: any) => {
+  const db = new sqlite3.Database(
+    "./database/printerSetting.db",
+    (err: any) => {
+      if (err) {
+        return console.error(err.message);
+      }
+      console.log("Connected to the printerSetting database");
+    }
+  );
+
+  db.serialize(() => {
+    // db.run("DROP TABLE IF EXISTS settings");
+    // return;
+
+    db.run(
+      `CREATE TABLE IF NOT EXISTS settings (
+        id INTEGER PRIMARY KEY,
+        port TEXT DEFAULT '', 
+        baudRate INTEGER DEFAULT 9600
+      )`
+    );
+
+    db.get(
+      `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
+      "settings",
+      (err: any, row: any) => {
+        console.log("db.get table result :: ", row);
+      }
+    );
+
+    db.get(`SELECT * FROM settings WHERE id=?`, 1, (err: any, row: any) => {
+      console.log("db.get row result :: ", row);
+
+      if (typeof row !== "undefined" && row.port && row.baudRate) {
+        let data = {
+          port: row.port,
+          baudRate: row.baudRate,
+        };
+
+        event.sender.send("dbPrinterSettings", data);
+      }
+    });
+  });
+
+  db.close((err: any) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log("Close the database connection.");
+  });
+});
+
 // 프린터 DB 초기화
 ipcMain.on("initPrintSettings", (event: any, data: any) => {
   const db = new sqlite3.Database(
