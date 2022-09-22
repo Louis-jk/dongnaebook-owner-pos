@@ -129,106 +129,114 @@ export default function PosPrinterSettingModal(props: IProps) {
           >
             POS 프린터 설정
           </Typography>
-          <Typography id="transition-modal-description">
-            영수증 프린터기의 세부 정보를 설정해주세요.
-          </Typography>
-          <Box
-            style={{ height: 1, width: "100%", backgroundColor: "#d5d5d5" }}
-            my={2}
-          />
-
-          <Box className={base.flexColumn}>
-            <Box className={base.flexRowStartCenter}>
-              <Typography
-                style={{
-                  minWidth: 75,
-                  flex: 1,
-                  textAlign: "left",
-                  fontWeight: "bold",
-                }}
-                sx={{ mr: 2 }}
-              >
-                Port
+          {getPortsList && getPortsList.length > 0 && (
+            <>
+              <Typography id="transition-modal-description">
+                영수증 프린터기의 세부 정보를 설정해주세요.
               </Typography>
-              <FormControl sx={{ minWidth: 200 }}>
-                <Select
-                  labelId="demo-simple-select-helper-label"
-                  id="demo-simple-select-helper"
-                  value={port}
-                  onChange={changePortHandler}
-                >
-                  {/* {getPortsList?.map((port: any, index: number) => (
-                    <MenuItem key={`port-${index}`} value={port.path}>
-                      {port.path}
-                    </MenuItem>
-                  ))} */}
-                  {PORT_LIST.map((port: string, index: number) => (
+              <Box
+                style={{ height: 1, width: "100%", backgroundColor: "#d5d5d5" }}
+                my={2}
+              />
+              <Box className={base.flexColumn}>
+                <Box className={base.flexRowStartCenter}>
+                  <Typography
+                    style={{
+                      minWidth: 75,
+                      flex: 1,
+                      textAlign: "left",
+                      fontWeight: "bold",
+                    }}
+                    sx={{ mr: 2 }}
+                  >
+                    Port
+                  </Typography>
+                  <FormControl sx={{ minWidth: 200 }}>
+                    <Select
+                      labelId="demo-simple-select-helper-label"
+                      id="demo-simple-select-helper"
+                      value={port}
+                      onChange={changePortHandler}
+                    >
+                      {getPortsList?.map((port: any, index: number) => (
+                        <MenuItem key={`port-${index}`} value={port.path}>
+                          {port.path}
+                        </MenuItem>
+                      ))}
+                      {/* {PORT_LIST.map((port: string, index: number) => (
                     <MenuItem key={`port-${index}`} value={port}>
                       {port}
                     </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
-            <Box sx={{ m: 1 }} />
-            <Box className={base.flexRowStartCenter}>
-              <Typography
-                style={{
-                  minWidth: 75,
-                  flex: 1,
-                  textAlign: "left",
-                  fontWeight: "bold",
-                }}
-                sx={{ mr: 2 }}
-              >
-                BaudRate
-              </Typography>
-              <FormControl sx={{ minWidth: 200 }}>
-                <Select
-                  labelId="demo-simple-select-helper-label"
-                  id="demo-simple-select-helper"
-                  value={baudRate}
-                  onChange={changeBaudRateHandler}
+                  ))} */}
+                    </Select>
+                  </FormControl>
+                </Box>
+                <Box sx={{ m: 1 }} />
+                <Box className={base.flexRowStartCenter}>
+                  <Typography
+                    style={{
+                      minWidth: 75,
+                      flex: 1,
+                      textAlign: "left",
+                      fontWeight: "bold",
+                    }}
+                    sx={{ mr: 2 }}
+                  >
+                    BaudRate
+                  </Typography>
+                  <FormControl sx={{ minWidth: 200 }}>
+                    <Select
+                      labelId="demo-simple-select-helper-label"
+                      id="demo-simple-select-helper"
+                      value={baudRate}
+                      onChange={changeBaudRateHandler}
+                    >
+                      {BAUD_RATE.map((rate, index) => (
+                        <MenuItem key={index} value={rate}>
+                          {rate}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Box>
+              <Box mb={2} />
+              <ButtonGroup fullWidth>
+                <Button
+                  variant="outlined"
+                  style={{
+                    height: 50,
+                    minWidth: 100,
+                    fontSize: 14,
+                    fontWeight: "bold",
+                    boxShadow: "none",
+                  }}
+                  onClick={printTest}
                 >
-                  {BAUD_RATE.map((rate, index) => (
-                    <MenuItem key={index} value={rate}>
-                      {rate}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
-          </Box>
-          <Box mb={2} />
-          <ButtonGroup fullWidth>
-            <Button
-              variant="outlined"
-              style={{
-                height: 50,
-                minWidth: 100,
-                fontSize: 14,
-                fontWeight: "bold",
-                boxShadow: "none",
-              }}
-              onClick={printTest}
-            >
-              테스트인쇄
-            </Button>
-            <Button
-              color="primary"
-              variant="contained"
-              style={{
-                height: 50,
-                minWidth: 100,
-                fontSize: 14,
-                fontWeight: "bold",
-                boxShadow: "none",
-              }}
-              onClick={setPrinterToRedux}
-            >
-              저장
-            </Button>
-          </ButtonGroup>
+                  테스트인쇄
+                </Button>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  style={{
+                    height: 50,
+                    minWidth: 100,
+                    fontSize: 14,
+                    fontWeight: "bold",
+                    boxShadow: "none",
+                  }}
+                  onClick={setPrinterToRedux}
+                >
+                  저장
+                </Button>
+              </ButtonGroup>
+            </>
+          )}
+          {getPortsList && getPortsList.length === 0 && (
+            <Typography id="transition-modal-description">
+              현재 연결된 프린터가 없습니다.
+            </Typography>
+          )}
           <Box
             style={{ height: 1, width: "100%", backgroundColor: "#d5d5d5" }}
             mt={2}
