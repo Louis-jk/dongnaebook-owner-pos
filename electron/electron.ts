@@ -5,57 +5,14 @@ const fs = require("fs");
 const os = require("os");
 const url = require("url");
 const { setup: setupPushReceiver } = require("electron-push-receiver");
-const SerialPort = require('serialport')
-const escpos = require('escpos')
-escpos.SerialPort = require('escpos-serialport');
+const SerialPort = require("serialport");
+const escpos = require("escpos");
+escpos.SerialPort = require("escpos-serialport");
 
-const sqlite3 = require('sqlite3').verbose();
-// const db = new sqlite3.Database(':memory:');
-
-const db = new sqlite3.Database('./database/printerSetting.db', (err: any) => {
-  if(err) {
-    return console.error(err.message);
-  }
-  console.log('Connected to the printerSetting database');
-});
-
-db.serialize(() => {
-  db.run("CREATE TABLE lorem (info TEXT)")
-
-  const stmt = db.prepare("INSERT INTO lorem VALUES (?)");
-
-  for (let i = 0; i < 10; i++) {
-      stmt.run("Ipsum " + i);
-  }
-  stmt.finalize();
-
-  db.each("SELECT rowid AS id, info FROM lorem", (err: any, row: any) => {
-      console.log(row.id + ": " + row.info);
-  });
-})
-
-db.close((err: any) => {
-  if(err) {
-    return console.error(err.message);
-  }
-  console.log('Close the database connection.');
-})
-
-// db.serialize(() => {
-//   db.run("CREATE TABLE lorem (info TEXT)");
-
-//   const stmt = db.prepare("INSERT INTO lorem VALUES (?)");
-//   for (let i = 0; i < 10; i++) {
-//       stmt.run("Ipsum " + i);
-//   }
-//   stmt.finalize();
-
-//   db.each("SELECT rowid AS id, info FROM lorem", (err: any, row: any) => {
-//       console.log(row.id + ": " + row.info);
-//   });
-// });
-
-// db.close();
+interface PrinterSettingsObjects {
+  port: string;
+  baudRate: number;
+}
 
 let mainWindow: Electron.BrowserWindow | null;
 
@@ -86,7 +43,7 @@ function createWindow() {
       preload: path.join(
         app.getAppPath(),
         isDev ? "/preload.js" : "/build/preload.js"
-      )
+      ),
     },
   });
 
@@ -97,7 +54,7 @@ function createWindow() {
     pathname: path.join(
       app.getAppPath(),
       isDev ? "/index.html" : "/build/index.html"
-    ), 
+    ),
     slashes: true,
   });
 
@@ -121,145 +78,244 @@ function createWindow() {
 // 브라우저 메뉴창 없애기
 Menu.setApplicationMenu(null);
 
+const sqlite3 = require("sqlite3").verbose();
+// 프린터 DB 초기화
+ipcMain.on("initPrintSettings", (event: any, data: any) => {
+  const db = new sqlite3.Database(
+    "./database/printerSetting.db",
+    (err: any) => {
+      if (err) {
+        return console.error(err.message);
+      }
+      console.log("Connected to the printerSetting database");
+    }
+  );
+
+  db.serialize(() => {
+    db.run(
+      `CREATE TABLE IF NOT EXISTS settings (
+        id INTEGER PRIMARY KEY,
+        port TEXT DEFAULT '', 
+        baudRate INTEGER DEFAULT 9600
+      )`
+    );
+
+    db.each("SELECT * FROM settings", (err: any, row: any) => {
+      console.log("search table error : ", err);
+      console.log("search table content : ", row);
+      console.log("search table id : ", row.id);
+      console.log("search table port : ", row.port);
+      console.log("search table baudRate : ", row.baudRate);
+    });
+  });
+
+  db.close((err: any) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log("Close the database connection.");
+  });
+});
+
+// 프린터 포트 설정 및 DB 저장
+ipcMain.on(
+  "savingPrintSettings",
+  (event: any, data: PrinterSettingsObjects) => {
+    const { port, baudRate } = data;
+
+    const db = new sqlite3.Database(
+      "./database/printerSetting.db",
+      (err: any) => {
+        if (err) {
+          return console.error("re connect error: ", err.message);
+        }
+        console.log("reConnected to the printerSetting database");
+      }
+    );
+
+    db.serialize(() => {
+      db.run(
+        "INSERT or REPLACE INTO settings (id, port, baudRate) VALUES((SELECT id from settings WHERE id = 1), ?, ?)",
+        [port, baudRate]
+      );
+    });
+
+    db.each("SELECT * FROM settings", (err: any, row: any) => {
+      console.error("update settings table error : ", err);
+      console.log("update settings table content : ", row);
+      console.log("update settings table port : ", row.port);
+      console.log("update settings table baudRate : ", row.baudRate);
+    });
+
+    db.close((err: any) => {
+      if (err) {
+        return console.error("re connect close error: ", err.message);
+      }
+      console.log("reConnect the database close.");
+    });
+  }
+);
+
 // const device = new SerialPort({
 //   path: 'COM4',
 //   baudRate: 9600
 // })
-
-const options = { encoding: 'cp949' } // cp949 or EUC-KR
+const options = { encoding: "cp949" }; // cp949 or EUC-KR
 
 // Serialport 리스트
-ipcMain.on('requestPortsList', (event: any, data: any) => {
-  console.log('serialPortsList called!')
+ipcMain.on("requestPortsList", (event: any, data: any) => {
+  console.log("serialPortsList called!");
   SerialPort.list().then((ports: any, err: any) => {
-    console.log('ports ?', ports)
-    event.sender.send('responsePortList', ports)
-  })
-})
+    console.log("ports ?", ports);
+    event.sender.send("responsePortList", ports);
+  });
+});
 
 // serialport 테스트 인쇄
-ipcMain.on('testPrint', (event: any, data: any) => {
-  
-  const {port, baudRate} = data;
+ipcMain.on("testPrint", (event: any, data: any) => {
+  const { port, baudRate } = data;
 
   const device = new escpos.SerialPort(port, { baudRate });
-  const printer = new escpos.Printer(device, options)
-  device.open(function(err: any) {
-    console.log('serialport error', err)
+  const printer = new escpos.Printer(device, options);
+  device.open(function (err: any) {
+    console.log("serialport error", err);
 
     printer
-    // .encode('EUC-KR')
-    .size(0.1, 0.1)
-    .font('A')
-    .align('ct')
-    .style('bu')
-    .text('동네북 주문전표')
-    .align('LT')
-    .style('NORMAL')
-    .newLine()
-    .size(0.01, 0.01)
-    .text('테스트 인쇄')
-    .newLine()
-    .drawLine()
-    .tableCustom([
-      { text: '총금액', width: 0.4, align: 'LEFT' },
-      { text: '2,000,000 원', width: 0.6, align: 'RIGHT' }
-    ])
-    .newLine()
-    .newLine()
-    .newLine()
-    .cut()
-    .close();
-  })
-})
+      // .encode('EUC-KR')
+      .size(0.1, 0.1)
+      .font("A")
+      .align("ct")
+      .style("bu")
+      .text("동네북 주문전표")
+      .align("LT")
+      .style("NORMAL")
+      .newLine()
+      .size(0.01, 0.01)
+      .text("테스트 인쇄")
+      .newLine()
+      .drawLine()
+      .tableCustom([
+        { text: "총금액", width: 0.4, align: "LEFT" },
+        { text: "2,000,000 원", width: 0.6, align: "RIGHT" },
+      ])
+      .newLine()
+      .newLine()
+      .newLine()
+      .cut()
+      .close();
+  });
+});
 
 // serialport 점표 인쇄
-ipcMain.on('orderPrint', (event: any, data: any) => {
-  
+ipcMain.on("orderPrint", (event: any, data: any) => {
   // orderAddress02
-  const {port, baudRate, orderId, orderPaymentType, orderType, orderAddress01, orderAddress03, orderAddressOld, orderContactNumber, requestToStore, requestToOfficer, requestToItem, orderMenus, totalOrderAmount, deliveryTip, point, coupon, totalPaymentAmount, orderStore, orderDateTime, origin } = data;
-
+  const {
+    port,
+    baudRate,
+    orderId,
+    orderPaymentType,
+    orderType,
+    orderAddress01,
+    orderAddress03,
+    orderAddressOld,
+    orderContactNumber,
+    requestToStore,
+    requestToOfficer,
+    requestToItem,
+    orderMenus,
+    totalOrderAmount,
+    deliveryTip,
+    point,
+    coupon,
+    totalPaymentAmount,
+    orderStore,
+    orderDateTime,
+    origin,
+  } = data;
 
   const device = new escpos.SerialPort(port, { baudRate });
-  const printer = new escpos.Printer(device, options)
-  device.open(function(err: any) {
-
+  const printer = new escpos.Printer(device, options);
+  device.open(function (err: any) {
     printer
-    .encode('EUC-KR')
-    .size(0.1, 0.1)
-    .font('a')
-    .align('ct')
-    .style('normal')
-    .text(`${orderType} 주문전표`)
-    .newLine()
-    .newLine()
-    .size(0.01, 0.01)
-    .align('lt')
-    .table(['주문번호', `${orderId}`])
-    .table(['결제방식', `${orderPaymentType}`])
-    .drawLine()
-    .text(`${orderType} 주소`)
-    .text(`${orderAddress01} ${orderAddress03}`)
-    .text(`${orderAddressOld}`)
-    .text('연락처')
-    .text(`${orderContactNumber}`)
-    .drawLine()
-    .text('요청사항')
-    .table(['사장님', `${requestToStore}`])
-    .table(['기사님', `${requestToOfficer}`])
-    .table(['일회용 수저, 포크', `${requestToItem}`]) 
-    .drawLine()
-    .table(["메뉴명", "수량", "금액"])
-    .drawLine();
+      .encode("EUC-KR")
+      .size(0.1, 0.1)
+      .font("a")
+      .align("ct")
+      .style("normal")
+      .text(`${orderType} 주문전표`)
+      .newLine()
+      .newLine()
+      .size(0.01, 0.01)
+      .align("lt")
+      .table(["주문번호", `${orderId}`])
+      .table(["결제방식", `${orderPaymentType}`])
+      .drawLine()
+      .text(`${orderType} 주소`)
+      .text(`${orderAddress01} ${orderAddress03}`)
+      .text(`${orderAddressOld}`)
+      .text("연락처")
+      .text(`${orderContactNumber}`)
+      .drawLine()
+      .text("요청사항")
+      .table(["사장님", `${requestToStore}`])
+      .table(["기사님", `${requestToOfficer}`])
+      .table(["일회용 수저, 포크", `${requestToItem}`])
+      .drawLine()
+      .table(["메뉴명", "수량", "금액"])
+      .drawLine();
 
     orderMenus.forEach((menus: any, index: number) => {
       printer
-      .encode('EUC-KR')
-      .table([`${menus.it_name}`, `${menus.ct_qty}개`, `${menus.sum_price}원`]);
-      
-      if(menus.cart_option && menus.cart_option.length > 0) {
+        .encode("EUC-KR")
+        .table([
+          `${menus.it_name}`,
+          `${menus.ct_qty}개`,
+          `${menus.sum_price}원`,
+        ]);
+
+      if (menus.cart_option && menus.cart_option.length > 0) {
         menus.cart_option.forEach((defaultOption: any, index: number) => {
           printer
             .text(`└ 기본옵션 : ${defaultOption.ct_option}`)
-            .text(`└ 옵션금액 : ${defaultOption.io_price}원`)
-        })
+            .text(`└ 옵션금액 : ${defaultOption.io_price}원`);
+        });
       }
 
-      if(menus.cart_add_option && menus.cart_add_option.length > 0) {
+      if (menus.cart_add_option && menus.cart_add_option.length > 0) {
         menus.cart_add_option.forEach((addOption: any, index: number) => {
           printer
             .text(`└ 추가옵션 : ${addOption.ct_option}`)
-            .text(`└ 옵션금액 : ${addOption.io_price}원`)
-        })
+            .text(`└ 옵션금액 : ${addOption.io_price}원`);
+        });
       }
 
-      printer.newLine()
+      printer.newLine();
     });
 
     printer
-    .encode('EUC-KR')
-    .drawLine()    
-    .text('결제정보')
-    .newLine()
-    .table(['총 주문금액', `${totalOrderAmount}`])
-    .table(['배달 팁', `${deliveryTip}`])
-    .table(['포인트', `${point}`])
-    .table(['쿠폰', `${coupon}`])
-    .drawLine()
-    .table(['합계(결제완료)', `${totalPaymentAmount}`])
-    .drawLine()
-    .table(['주문매장', `${orderStore}`])
-    .table(['주문번호', `${orderId}`])
-    .table(['주문일시', `${orderDateTime}`])
-    .drawLine()
-    .text('원산지')
-    .text(`${origin}`)
-    .newLine()
-    .newLine()
-    .cut()
-    .close();
-  })
-})
+      .encode("EUC-KR")
+      .drawLine()
+      .text("결제정보")
+      .newLine()
+      .table(["총 주문금액", `${totalOrderAmount}`])
+      .table(["배달 팁", `${deliveryTip}`])
+      .table(["포인트", `${point}`])
+      .table(["쿠폰", `${coupon}`])
+      .drawLine()
+      .table(["합계(결제완료)", `${totalPaymentAmount}`])
+      .drawLine()
+      .table(["주문매장", `${orderStore}`])
+      .table(["주문번호", `${orderId}`])
+      .table(["주문일시", `${orderDateTime}`])
+      .drawLine()
+      .text("원산지")
+      .text(`${origin}`)
+      .newLine()
+      .newLine()
+      .cut()
+      .close();
+  });
+});
 
 // 프린트 기능
 ipcMain.on("pos_print", (event, data) => {
