@@ -221,17 +221,19 @@ const options = { encoding: "cp949" }; // cp949 or EUC-KR
 ipcMain.on("requestPortsList", (event: any, data: any) => {
   console.log("serialPortsList called!");
   SerialPort.list().then((ports: any, err: any) => {
-    console.log("serial ports 가져온거 ?", ports);
+    console.log("serial ports list : ", ports);
 
     let serialPortsArr: any[] = [];
 
     if (ports && ports.length > 0) {
-      let sortArr = ports.filter(
-        (port: any) => typeof port.serialNumber !== "undefined"
-      );
+      // let sortArr = ports.filter(
+      //   (port: any) => typeof port.serialNumber !== "undefined"
+      // );
+
+      let sortArr = ports.filter((port: any) => port.path.startsWith("COM"));
       serialPortsArr = sortArr;
     }
-
+    console.log("serialPortsArr ??", serialPortsArr);
     event.sender.send("responsePortList", serialPortsArr);
   });
 });
