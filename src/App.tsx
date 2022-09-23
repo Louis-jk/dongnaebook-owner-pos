@@ -15,6 +15,7 @@ import Api from "./Api";
 import * as orderAction from "./redux/actions/orderAction";
 import * as printerSettingAction from "./redux/actions/printerSettingAction";
 import appRuntime from "./appRuntime";
+import { PrinterSettingsObjects } from "./interfaces/serialport.interface";
 
 function App() {
   const dispatch = useDispatch();
@@ -51,11 +52,11 @@ function App() {
     return () => getPrinterSettings();
   }, []);
 
-  appRuntime.on("dbPrinterSettings", (event: any, data: any) => {
+  appRuntime.on("dbPrinterSettings", (event: any, data: PrinterSettingsObjects) => {
     console.log("dbPrinterSettings DATA ??", data);
-    let dbData = {
+    let dbData: PrinterSettingsObjects = {
       port: data.port,
-      baudRate: String(data.baudRate),
+      baudRate: data.baudRate,
     };
     dispatch(printerSettingAction.updatePrinter(dbData));
   });
@@ -129,7 +130,6 @@ function App() {
       });
       getNewOrderHandler();
       handleClick(payload.notification.title, payload.notification.body);
-      // console.log(payload);
     })
     .catch((err) => console.log("failed: ", err));
 
