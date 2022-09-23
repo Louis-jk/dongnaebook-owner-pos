@@ -21,6 +21,7 @@ import {
 import { theme, baseStyles, ModalCancelButton } from "../styles/base";
 import * as printerSettingAction from "../redux/actions/printerSettingAction";
 import appRuntime from "../appRuntime";
+import { PrinterSettingsObjects } from "../interfaces/serialport.interface";
 
 interface IProps {
   isOpen: boolean;
@@ -64,11 +65,13 @@ export default function PosPrinterSettingModal(props: IProps) {
   const changeBaudRateHandler = (event: SelectChangeEvent) => {
     // setBaudRate(event.target.value as string)
     let selectBaudRate = event.target.value as string;
-    dispatch(printerSettingAction.updatePrinterBaudRate(selectBaudRate));
+    dispatch(
+      printerSettingAction.updatePrinterBaudRate(Number(selectBaudRate))
+    );
   };
 
   const printTest = () => {
-    let data = {
+    let data: PrinterSettingsObjects = {
       port,
       baudRate,
     };
@@ -77,19 +80,14 @@ export default function PosPrinterSettingModal(props: IProps) {
 
   // 프린터 설정 리덕스 연동
   const setPrinterToRedux = () => {
-    if (port !== "" && baudRate !== "") {
-      let data = {
+    if (port !== "" && baudRate !== 0) {
+      let data: PrinterSettingsObjects = {
         port,
         baudRate,
       };
 
-      let data02 = {
-        port,
-        baudRate: Number(baudRate),
-      };
-
       dispatch(printerSettingAction.updatePrinter(data));
-      appRuntime.send("savingPrintSettings", data02);
+      appRuntime.send("savingPrintSettings", data);
 
       toast.success("저장하였습니다.", {
         duration: 4000,

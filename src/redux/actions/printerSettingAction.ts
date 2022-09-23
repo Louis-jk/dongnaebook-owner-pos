@@ -1,32 +1,24 @@
-import types from './types';
-
-interface PrinterSetting {
-  port: string,
-  baudRate: string
-}
+import { PrinterSettingsObjects } from "../../interfaces/serialport.interface";
+import types from "./types";
 
 export function updatePrinterPort(data: string) {
-
   return {
     type: types.UPDATE_PRINTER_PORT,
-    port: data
+    port: data,
   };
 }
 
-export function updatePrinterBaudRate(data: string) {
-
+export function updatePrinterBaudRate(data: number) {
   return {
     type: types.UPDATE_PRINTER_BAUDRATE,
-    baudRate: data
+    baudRate: data,
   };
 }
 
-
-export function updatePrinter(data: PrinterSetting) {
-
+export function updatePrinter(data: PrinterSettingsObjects) {
   return {
     type: types.UPDATE_PRINTER_SETTING,
     port: data.port,
-    baudRate: data.baudRate
+    baudRate: data.baudRate,
   };
 }
