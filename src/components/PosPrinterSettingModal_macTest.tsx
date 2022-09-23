@@ -64,7 +64,7 @@ export default function PosPrinterSettingModal(props: IProps) {
   const changeBaudRateHandler = (event: SelectChangeEvent) => {
     // setBaudRate(event.target.value as string)
     let selectBaudRate = event.target.value as string;
-    dispatch(printerSettingAction.updatePrinterBaudRate(selectBaudRate));
+    dispatch(printerSettingAction.updatePrinterBaudRate(Number(selectBaudRate)));
   };
 
   const printTest = () => {
