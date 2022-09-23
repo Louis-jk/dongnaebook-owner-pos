@@ -221,19 +221,15 @@ const options = { encoding: "cp949" }; // cp949 or EUC-KR
 ipcMain.on("requestPortsList", (event: any, data: any) => {
   console.log("serialPortsList called!");
   SerialPort.list().then((ports: any, err: any) => {
-    console.log("serial ports list : ", ports);
+    // console.log("serial ports list : ", ports);
 
     let serialPortsArr: any[] = [];
 
     if (ports && ports.length > 0) {
-      // let sortArr = ports.filter(
-      //   (port: any) => typeof port.serialNumber !== "undefined"
-      // );
-
       let sortArr = ports.filter((port: any) => port.path.startsWith("COM"));
       serialPortsArr = sortArr;
     }
-    console.log("serialPortsArr ??", serialPortsArr);
+    
     event.sender.send("responsePortList", serialPortsArr);
   });
 });
@@ -248,28 +244,62 @@ ipcMain.on("testPrint", (event: any, data: any) => {
     console.log("serialport error", err);
 
     printer
-      // .encode('EUC-KR')
+      // .encode('EUC-KR')      
+      .align("CT")
+      .style("B")
       .size(0.1, 0.1)
-      .font("A")
-      .align("ct")
-      .style("bu")
       .text("동네북 주문전표")
-      .align("LT")
       .style("NORMAL")
-      .newLine()
       .size(0.01, 0.01)
-      .text("테스트 인쇄")
-      .newLine()
+      // .tableCustom(
+      //   [
+      //     { text:"사장님", align:"LEFT", width: 0.1 },
+      //     { text:"요청사항이 없습니다.", align:"RIGHT", width:0.9 }
+      //   ]
+      // )
+      .tableCustom(
+        [
+          { text:"사장님", align:"LEFT", width: 0.1 },
+          { text:"요청사항이 없습니다.", align:"RIGHT", width: 0.9 }
+        ]
+      )
       .drawLine()
-      .tableCustom([
-        { text: "총금액", width: 0.4, align: "LEFT" },
-        { text: "2,000,000 원", width: 0.6, align: "RIGHT" },
-      ])
-      .newLine()
-      .newLine()
-      .newLine()
+      .text('Custom No Line TABLE')
+      .tableNoLine(["사장님", "요청사항이 없습니다."])
+      .drawLine()
+      .text('ORIGIN TABLE')
+      .table(["사장님", "요청사항이 없습니다."])      
       .cut()
       .close();
+      // .align("lt")
+      // .newLine()
+      // .size(0.01, 0.01)
+      // .text("테스트 인쇄")
+      // .drawLine()
+      // .table(["사장님", "요청사항이 없습니다."])
+      // .table(["기사님", "요청사항이 있습니다."])
+      // .tableCustom(
+      //   [
+      //     { text:"사장님", align:"LEFT", width:0.1, style: 'B' },
+      //     { text:"요청사항이 없습니다.", align:"RIGHT", width:0.9 }
+      //   ]
+      // )
+      // .drawLine()      
+      // .cut('full')
+      // .cashdraw(5)
+      // .beep(1, 100)
+      // .close();
+      
+      // .drawLine()
+      // .tableCustom([
+      //   { text: "총금액", width: 0.4, align: "LEFT" },
+      //   { text: "2,000,000 원", width: 0.6, align: "RIGHT" },
+      // ])
+      // .newLine()
+      // .newLine()
+      // .newLine()
+      // .cut()
+      // .close();
   });
 });
 
@@ -304,16 +334,17 @@ ipcMain.on("orderPrint", (event: any, data: any) => {
   const printer = new escpos.Printer(device, options);
   device.open(function (err: any) {
     printer
-      .encode("EUC-KR")
+      // .encode("EUC-KR")
       .size(0.1, 0.1)
-      .font("a")
-      .align("ct")
-      .style("normal")
+      .align("CT")
+      .style("B")
       .text(`${orderType} 주문전표`)
       .newLine()
       .newLine()
+      .style("NORMAL")
       .size(0.01, 0.01)
-      .align("lt")
+      .align("LT")
+      .size(0.01, 0.01)
       .table(["주문번호", `${orderId}`])
       .table(["결제방식", `${orderPaymentType}`])
       .drawLine()
@@ -325,6 +356,12 @@ ipcMain.on("orderPrint", (event: any, data: any) => {
       .drawLine()
       .text("요청사항")
       .table(["사장님", `${requestToStore}`])
+      .tableCustom(
+        [
+          { text:"사장님", align:"LEFT", width: 0.1 },
+          { text:"요청사항이 없습니다.", align:"RIGHT", width:0.9 }
+        ]
+      )
       .table(["기사님", `${requestToOfficer}`])
       .table(["일회용 수저, 포크", `${requestToItem}`])
       .drawLine()
@@ -334,6 +371,8 @@ ipcMain.on("orderPrint", (event: any, data: any) => {
     orderMenus.forEach((menus: any, index: number) => {
       printer
         .encode("EUC-KR")
+        .style("NORMAL")
+        .size(0.01, 0.01)
         .table([
           `${menus.it_name}`,
           `${menus.ct_qty}개`,
@@ -343,6 +382,9 @@ ipcMain.on("orderPrint", (event: any, data: any) => {
       if (menus.cart_option && menus.cart_option.length > 0) {
         menus.cart_option.forEach((defaultOption: any, index: number) => {
           printer
+            .encode("EUC-KR")
+            .style("NORMAL")
+            .size(0.01, 0.01)
             .text(`└ 기본옵션 : ${defaultOption.ct_option}`)
             .text(`└ 옵션금액 : ${defaultOption.io_price}원`);
         });
@@ -351,6 +393,9 @@ ipcMain.on("orderPrint", (event: any, data: any) => {
       if (menus.cart_add_option && menus.cart_add_option.length > 0) {
         menus.cart_add_option.forEach((addOption: any, index: number) => {
           printer
+            .encode("EUC-KR")
+            .style("NORMAL")
+            .size(0.01, 0.01)
             .text(`└ 추가옵션 : ${addOption.ct_option}`)
             .text(`└ 옵션금액 : ${addOption.io_price}원`);
         });
@@ -361,7 +406,10 @@ ipcMain.on("orderPrint", (event: any, data: any) => {
 
     printer
       .encode("EUC-KR")
+      .style("NORMAL")
+      .size(0.01, 0.01)   
       .drawLine()
+      .newLine()
       .text("결제정보")
       .newLine()
       .table(["총 주문금액", `${totalOrderAmount}`])
@@ -377,7 +425,6 @@ ipcMain.on("orderPrint", (event: any, data: any) => {
       .drawLine()
       .text("원산지")
       .text(`${origin}`)
-      .newLine()
       .newLine()
       .cut()
       .close();
