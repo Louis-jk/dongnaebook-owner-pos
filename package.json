@@ -53,6 +53,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
     "react-to-print": "^2.12.6",
+    "receiptio": "^1.5.0",
     "receiptline": "1.11.0",
     "redux": "^4.1.0",
     "redux-devtools-extension": "^2.13.9",
