@@ -78,6 +78,50 @@ function createWindow() {
 // 브라우저 메뉴창 없애기
 Menu.setApplicationMenu(null);
 
+// ▼　receiptio 테스트
+// const receiptio = require("receiptio");
+// const receiptmd = `^^배달 주문전표
+
+// 주문번호 | 20220915173224123
+// 결제방식 | 카드결제완료
+// -
+// 배달주소 |
+// 부산 금정구 금정로 225 4층 |
+
+// 연락처 |
+// 010-2017-0700 |
+// -
+// 요청사항 |
+// 사장님께 | 요청사항이 없습니다.
+// 기사님께 | 요청사항이 없습니다.요청사항이 없습니다.요청사항이 없습니다.
+// -
+// 메뉴명 | 수량 | 금액
+// -
+// 짬뽕밥 | 1개 | 8500원
+// - 기본옵션 : 짬뽕밥 |
+// - 옵션금액 : 0원 |
+// - 추가옵션 : 군만두 : 소 |
+// - 옵션금액 : 2000원 |
+
+// 탕수육 | 1개 | 13000원
+// - 기본옵션 : 사이즈 : 소 |
+// - 옵션금액 : 0원 |
+// -
+// 결제정보 |
+// 총 주문금액 | 28500원
+// 배달 팁 | 0원
+// 포인트 | 0원
+// 쿠폰 | 0원
+// -
+// ^^합계(결제완료) | ^^25,500원
+// `;
+
+// receiptio.print(receiptmd, "-d COM4 -p escpos -c 42").then((result: any) => {
+//   console.log("receiptio ", result);
+// });
+
+// ▲　receiptio 테스트
+
 const sqlite3 = require("sqlite3").verbose();
 
 // 프린터 DB가 있을 시, DB에 레코드값을 있을 시 데이터 값 반환
@@ -229,7 +273,7 @@ ipcMain.on("requestPortsList", (event: any, data: any) => {
       let sortArr = ports.filter((port: any) => port.path.startsWith("COM"));
       serialPortsArr = sortArr;
     }
-    
+
     event.sender.send("responsePortList", serialPortsArr);
   });
 });
@@ -238,68 +282,31 @@ ipcMain.on("requestPortsList", (event: any, data: any) => {
 ipcMain.on("testPrint", (event: any, data: any) => {
   const { port, baudRate } = data;
 
-  const device = new escpos.SerialPort(port, { baudRate });
+  const device = new escpos.SerialPort(port, { baudRate, width: 32 });
   const printer = new escpos.Printer(device, options);
   device.open(function (err: any) {
     console.log("serialport error", err);
 
     printer
-      // .encode('EUC-KR')      
+      // .encode('EUC-KR')
       .align("CT")
       .style("B")
       .size(0.1, 0.1)
       .text("동네북 주문전표")
       .style("NORMAL")
       .size(0.01, 0.01)
-      // .tableCustom(
-      //   [
-      //     { text:"사장님", align:"LEFT", width: 0.1 },
-      //     { text:"요청사항이 없습니다.", align:"RIGHT", width:0.9 }
-      //   ]
-      // )
-      .tableCustom(
-        [
-          { text:"사장님", align:"LEFT", width: 0.1 },
-          { text:"요청사항이 없습니다.", align:"RIGHT", width: 0.9 }
-        ]
-      )
+      .tableCustom([
+        { text: "사장님", align: "LEFT", width: 0.1 },
+        { text: "요청사항이 없습니다.", align: "RIGHT", width: 0.9 },
+      ])
       .drawLine()
-      .text('Custom No Line TABLE')
+      .text("Custom No Line TABLE")
       .tableNoLine(["사장님", "요청사항이 없습니다."])
       .drawLine()
-      .text('ORIGIN TABLE')
-      .table(["사장님", "요청사항이 없습니다."])      
+      .text("ORIGIN TABLE")
+      .table(["사장님", "요청사항이 없습니다."])
       .cut()
       .close();
-      // .align("lt")
-      // .newLine()
-      // .size(0.01, 0.01)
-      // .text("테스트 인쇄")
-      // .drawLine()
-      // .table(["사장님", "요청사항이 없습니다."])
-      // .table(["기사님", "요청사항이 있습니다."])
-      // .tableCustom(
-      //   [
-      //     { text:"사장님", align:"LEFT", width:0.1, style: 'B' },
-      //     { text:"요청사항이 없습니다.", align:"RIGHT", width:0.9 }
-      //   ]
-      // )
-      // .drawLine()      
-      // .cut('full')
-      // .cashdraw(5)
-      // .beep(1, 100)
-      // .close();
-      
-      // .drawLine()
-      // .tableCustom([
-      //   { text: "총금액", width: 0.4, align: "LEFT" },
-      //   { text: "2,000,000 원", width: 0.6, align: "RIGHT" },
-      // ])
-      // .newLine()
-      // .newLine()
-      // .newLine()
-      // .cut()
-      // .close();
   });
 });
 
@@ -356,12 +363,10 @@ ipcMain.on("orderPrint", (event: any, data: any) => {
       .drawLine()
       .text("요청사항")
       .table(["사장님", `${requestToStore}`])
-      .tableCustom(
-        [
-          { text:"사장님", align:"LEFT", width: 0.1 },
-          { text:"요청사항이 없습니다.", align:"RIGHT", width:0.9 }
-        ]
-      )
+      .tableCustom([
+        { text: "사장님", align: "LEFT", width: 0.1 },
+        { text: "요청사항이 없습니다.", align: "RIGHT", width: 0.9 },
+      ])
       .table(["기사님", `${requestToOfficer}`])
       .table(["일회용 수저, 포크", `${requestToItem}`])
       .drawLine()
@@ -407,7 +412,7 @@ ipcMain.on("orderPrint", (event: any, data: any) => {
     printer
       .encode("EUC-KR")
       .style("NORMAL")
-      .size(0.01, 0.01)   
+      .size(0.01, 0.01)
       .drawLine()
       .newLine()
       .text("결제정보")
