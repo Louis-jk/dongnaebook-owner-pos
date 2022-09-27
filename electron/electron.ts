@@ -259,7 +259,7 @@ ipcMain.on(
 //   path: 'COM4',
 //   baudRate: 9600
 // })
-const options = { encoding: "cp949" }; // cp949 or EUC-KR
+const options = { encoding: "cp949", width: 32 }; // cp949 or EUC-KR
 
 // Serialport 리스트
 ipcMain.on("requestPortsList", (event: any, data: any) => {
@@ -282,7 +282,7 @@ ipcMain.on("requestPortsList", (event: any, data: any) => {
 ipcMain.on("testPrint", (event: any, data: any) => {
   const { port, baudRate } = data;
 
-  const device = new escpos.SerialPort(port, { baudRate, width: 32 });
+  const device = new escpos.SerialPort(port, { baudRate });
   const printer = new escpos.Printer(device, options);
   device.open(function (err: any) {
     console.log("serialport error", err);
