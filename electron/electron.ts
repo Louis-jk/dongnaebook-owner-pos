@@ -300,6 +300,12 @@ ipcMain.on("testPrint", (event: any, data: any) => {
         { text: "요청사항이 없습니다.", align: "RIGHT", width: 0.9 },
       ])
       .drawLine()
+      .text("tableRow")
+      .drawLine()
+      .tableRow([
+        { text: "사장님", align: "LEFT", width: 0.1 },
+        { text: "요청사항이 없습니다.", align: "RIGHT", width: 0.9 },
+      ])
       .text("Custom No Line TABLE")
       .tableNoLine(["사장님", "요청사항이 없습니다."])
       .drawLine()
