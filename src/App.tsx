@@ -52,14 +52,17 @@ function App() {
     return () => getPrinterSettings();
   }, []);
 
-  appRuntime.on("dbPrinterSettings", (event: any, data: PrinterSettingsObjects) => {
-    console.log("dbPrinterSettings DATA ??", data);
-    let dbData: PrinterSettingsObjects = {
-      port: data.port,
-      baudRate: data.baudRate,
-    };
-    dispatch(printerSettingAction.updatePrinter(dbData));
-  });
+  appRuntime.on(
+    "dbPrinterSettings",
+    (event: any, data: PrinterSettingsObjects) => {
+      console.log("dbPrinterSettings DATA ??", data);
+      let dbData: PrinterSettingsObjects = {
+        port: data.port,
+        baudRate: data.baudRate,
+      };
+      dispatch(printerSettingAction.updatePrinter(dbData));
+    }
+  );
 
   // 현재 신규주문 건수 가져오기
   const getNewOrderHandler = () => {

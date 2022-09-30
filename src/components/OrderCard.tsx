@@ -228,9 +228,9 @@ export default function OrderCard(props: OrderProps) {
                   backgroundColor:
                     order.od_type === "배달"
                       ? theme.palette.primary.main
-                      : order.od_type === "포장" ?
-                        theme.palette.info.light
-                        : '#ffd24c'
+                      : order.od_type === "포장"
+                      ? theme.palette.info.light
+                      : "#ffd24c",
                 }}
               >
                 <Typography
@@ -401,7 +401,7 @@ export default function OrderCard(props: OrderProps) {
                       )
                     }
                   >
-                    접수처리
+                    {order.od_type}접수
                   </Button>
                 ) : type === "check" && order.od_type === "배달" ? (
                   <Button
