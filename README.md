@@ -86,7 +86,10 @@ Printer.prototype.tableRow = function (data, options = {}) {
         if (obj.style) {
           lineStr +=
             // this._getStyle(obj.style) +
-            _.TEXT_FORMAT.TXT_ALIGN_RT + obj.text + this._getStyle("NORMAL");
+            _.ESC + // <-- add
+            _.TEXT_FORMAT.TXT_ALIGN_RT +
+            obj.text +
+            this._getStyle("NORMAL");
         } else {
           lineStr += obj.text;
         }
@@ -125,7 +128,7 @@ Printer.prototype.tableRow = function (data, options = {}) {
   // Set size to line
   if (width > 1 || height > 1) {
     lineStr =
-      _.TEXT_FORMAT.TXT_CUSTOM_SIZE(width, height) + // <--change
+      _.TEXT_FORMAT.TXT_CUSTOM_SIZE(width, height) +
       lineStr +
       _.TEXT_FORMAT.TXT_NORMAL;
   }
