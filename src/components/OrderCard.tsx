@@ -219,6 +219,7 @@ export default function OrderCard(props: OrderProps) {
           >
             <Box>
               {/* 배달주문 / 포장주문 마커 */}
+              {console.log("order.od_type?", order.od_type)}
               <Box
                 style={{
                   width: "fit-content",
@@ -230,7 +231,9 @@ export default function OrderCard(props: OrderProps) {
                       ? theme.palette.primary.main
                       : order.od_type === "포장"
                       ? theme.palette.info.light
-                      : "#ffd24c",
+                      : order.od_type === "식사"
+                      ? "#ffd24c"
+                      : theme.palette.primary.main,
                 }}
               >
                 <Typography
@@ -385,7 +388,13 @@ export default function OrderCard(props: OrderProps) {
                 {type === "new" ? (
                   <Button
                     variant="contained"
-                    color="primary"
+                    color={
+                      order.od_type === "식사"
+                        ? "secondary"
+                        : order.od_type === "포장"
+                        ? "success"
+                        : "primary"
+                    }
                     style={{
                       color: theme.palette.primary.contrastText,
                       minWidth: 120,

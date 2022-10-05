@@ -24,7 +24,7 @@ function App() {
   );
   const { isChecked } = useSelector((state: any) => state.checkOrder);
   const [audio] = React.useState(
-    new Audio("https://dmonster1452.cafe24.com/api/sound.mp3")
+    new Audio("https://dongnaebook.app/api/dongnaebook_sound_1.mp3")
   );
   const [notification, setNotification] = React.useState({
     title: "",

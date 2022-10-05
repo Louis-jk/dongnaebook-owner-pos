@@ -161,7 +161,7 @@ export default function Main(props: any) {
     >
       <CircularProgress
         disableShrink
-        color="secondary"
+        color="info"
         style={{ width: 50, height: 50, marginBottom: 20 }}
       />
       <Typography style={{ color: theme.palette.primary.contrastText }}>

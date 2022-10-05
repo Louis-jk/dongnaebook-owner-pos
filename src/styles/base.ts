@@ -36,15 +36,15 @@ export const theme = createTheme(
         contrastText: "#fff",
       },
       secondary: {
+        light: "#ffd24c",
+        main: "#ffd24c",
+        dark: "#ffd24c",
+        contrastText: "#000",
+      },
+      info: {
         light: "#444259",
         main: "#1c1b30",
         dark: "#000008",
-        contrastText: "#fff",
-      },
-      info: {
-        light: "#66caa4",
-        main: "#309975",
-        dark: "#006a49",
         contrastText: "#fff",
       },
       success: {

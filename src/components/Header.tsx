@@ -455,10 +455,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
 
   // 메뉴 드로어
   const drawer = (
-    <div
-      style={{ backgroundColor: theme.palette.secondary.main, height: "100%" }}
-    >
-      <Toolbar style={{ backgroundColor: theme.palette.secondary.main }}>
+    <div style={{ backgroundColor: theme.palette.info.main, height: "100%" }}>
+      <Toolbar style={{ backgroundColor: theme.palette.info.main }}>
         <ButtonGroup
           variant="contained"
           color="inherit"
@@ -468,11 +466,19 @@ export default function ResponsiveDrawer(props: OptionalProps) {
           <Button
             onClick={() => menuControlHandler("order")}
             style={{
-              background: selectType === "order" ? theme.palette.primary.main : theme.palette.secondary.light,
+              background:
+                selectType === "order"
+                  ? theme.palette.primary.main
+                  : theme.palette.info.light,
             }}
           >
             <Typography
-              style={{ color: selectType === "order" ? theme.palette.secondary.main : theme.palette.primary.main }}
+              style={{
+                color:
+                  selectType === "order"
+                    ? theme.palette.info.main
+                    : theme.palette.primary.main,
+              }}
             >
               주문
             </Typography>
@@ -480,11 +486,19 @@ export default function ResponsiveDrawer(props: OptionalProps) {
           <Button
             onClick={() => menuControlHandler("store")}
             style={{
-              background: selectType === "store" ? theme.palette.primary.main : theme.palette.secondary.light,
+              background:
+                selectType === "store"
+                  ? theme.palette.primary.main
+                  : theme.palette.info.light,
             }}
           >
             <Typography
-              style={{ color: selectType === "store" ? theme.palette.secondary.main : theme.palette.primary.main }}
+              style={{
+                color:
+                  selectType === "store"
+                    ? theme.palette.info.main
+                    : theme.palette.primary.main,
+              }}
             >
               매장
             </Typography>
@@ -504,8 +518,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
             style={{
               color:
                 curPathName === "order_new" || props.detail === "order_new"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "order_new" || props.detail === "order_new"
                   ? "#fff"
@@ -528,7 +542,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                     : newOrder.length === 0 &&
                       (curPathName === "order_new" ||
                         props.detail === "order_new")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : "#fff",
               }}
             >
@@ -547,11 +561,11 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                     : newOrder.length > 0 &&
                       (curPathName === "order_new" ||
                         props.detail === "order_new")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : newOrder.length === 0 &&
                       (curPathName === "order_new" ||
                         props.detail === "order_new")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : "#fff",
               }}
             >
@@ -570,8 +584,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                 curPathName === "order_check" ||
                 props.detail === "order_check_delivery" ||
                 props.detail === "order_check_takeout"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "order_check" ||
                 props.detail === "order_check_delivery" ||
@@ -594,12 +608,12 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                       (curPathName === "order_check" ||
                         props.detail === "order_check_delivery" ||
                         props.detail === "order_check_takeout")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : checkOrder.length === 0 &&
                       (curPathName === "order_check" ||
                         props.detail === "order_check_delivery" ||
                         props.detail === "order_check_takeout")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : "#fff",
               }}
             >
@@ -620,12 +634,12 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                       (curPathName === "order_check" ||
                         props.detail === "order_check_delivery" ||
                         props.detail === "order_check_takeout")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : checkOrder.length === 0 &&
                       (curPathName === "order_check" ||
                         props.detail === "order_check_delivery" ||
                         props.detail === "order_check_takeout")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : "#fff",
               }}
             >
@@ -643,8 +657,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
               color:
                 curPathName === "order_delivery" ||
                 props.detail === "order_delivery"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "order_delivery" ||
                 props.detail === "order_delivery"
@@ -664,11 +678,11 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                     : deliveryOrder.length > 0 &&
                       (curPathName === "order_delivery" ||
                         props.detail === "order_delivery")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : deliveryOrder.length === 0 &&
                       (curPathName === "order_delivery" ||
                         props.detail === "order_delivery")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : "#fff",
               }}
             >
@@ -687,11 +701,11 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                     : deliveryOrder.length > 0 &&
                       (curPathName === "order_delivery" ||
                         props.detail === "order_delivery")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : deliveryOrder.length === 0 &&
                       (curPathName === "order_delivery" ||
                         props.detail === "order_delivery")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : "#fff",
               }}
             >
@@ -708,8 +722,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
             style={{
               color:
                 curPathName === "order_done" || props.detail === "order_done"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "order_done" || props.detail === "order_done"
                   ? "#fff"
@@ -728,11 +742,11 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                     : doneOrder.length > 0 &&
                       (curPathName === "order_done" ||
                         props.detail === "order_done")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : doneOrder.length === 0 &&
                       (curPathName === "order_done" ||
                         props.detail === "order_done")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : "#fff",
               }}
             >
@@ -751,11 +765,11 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                     : doneOrder.length > 0 &&
                       (curPathName === "order_done" ||
                         props.detail === "order_done")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : doneOrder.length === 0 &&
                       (curPathName === "order_done" ||
                         props.detail === "order_done")
-                    ? theme.palette.secondary.main
+                    ? theme.palette.info.main
                     : "#fff",
               }}
             >
@@ -776,8 +790,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
             style={{
               color:
                 curPathName === "set_storetime"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "set_storetime" ? "#fff" : "transparent",
             }}
@@ -796,8 +810,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
             style={{
               color:
                 curPathName === "caculate"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "caculate" ? "#fff" : "transparent",
             }}
@@ -816,8 +830,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
             style={{
               color:
                 curPathName === "category"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "category" ? "#fff" : "transparent",
             }}
@@ -838,8 +852,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                 curPathName === "menu" ||
                 props.type === "menuEdit" ||
                 props.type === "menuAdd"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "menu" ||
                 props.type === "menuEdit" ||
@@ -864,8 +878,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                 curPathName === "coupons" ||
                 props.type === "couponAdd" ||
                 props.type === "couponEdit"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "coupons" ||
                 props.type === "couponAdd" ||
@@ -888,8 +902,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
             style={{
               color:
                 curPathName === "tips"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor: curPathName === "tips" ? "#fff" : "transparent",
             }}
           >
@@ -907,8 +921,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
             style={{
               color:
                 curPathName === "store_info"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "store_info" ? "#fff" : "transparent",
             }}
@@ -927,8 +941,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
             style={{
               color:
                 curPathName === "store_setting"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "store_setting" ? "#fff" : "transparent",
             }}
@@ -947,8 +961,8 @@ export default function ResponsiveDrawer(props: OptionalProps) {
             style={{
               color:
                 curPathName === "reviews"
-                  ? theme.palette.secondary.main
-                  : theme.palette.secondary.contrastText,
+                  ? theme.palette.info.main
+                  : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "reviews" ? "#fff" : "transparent",
             }}
@@ -979,7 +993,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
           position: "fixed",
           width: "100%",
           zIndex: 100,
-          backgroundColor: theme.palette.secondary.main,
+          backgroundColor: theme.palette.info.main,
           color: "#fff",
         }}
       >
@@ -988,7 +1002,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
           component="h5"
           style={{
             fontWeight: 500,
-            color: theme.palette.secondary.contrastText,
+            color: theme.palette.info.contrastText,
             margin: "12px 20px",
           }}
         >
@@ -1043,10 +1057,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                 </Box>
               ))
             ) : (
-              <Typography
-                color="secondary"
-                style={{ fontWeight: 500, margin: 20 }}
-              >
+              <Typography color="info" style={{ fontWeight: 500, margin: 20 }}>
                 등록된 매장이 없습니다.
               </Typography>
             )}
@@ -1153,7 +1164,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
           ml: { sm: `${drawerWidth}px` },
           boxShadow: "none",
           flex: 1,
-          backgroundColor: theme.palette.secondary.main,
+          backgroundColor: theme.palette.info.main,
         }}
       >
         <Toolbar
@@ -1237,7 +1248,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
             <Button
               color="primary"
               style={{
-                color: theme.palette.secondary.contrastText,
+                color: theme.palette.info.contrastText,
                 marginRight: 30,
               }}
               onClick={openPosPrinterModalHandler}
@@ -1280,7 +1291,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
               <Button
                 color="primary"
                 style={{
-                  color: theme.palette.secondary.contrastText,
+                  color: theme.palette.info.contrastText,
                   marginRight: 30,
                 }}
                 onClick={openCloseStoreModalHandler}
@@ -1317,7 +1328,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   style={{ paddingLeft: 10, paddingRight: 10, marginRight: 10 }}
                   onClick={props.action}
                 >
-                  <Typography color="secondary">접수처리</Typography>
+                  <Typography color="info">접수처리</Typography>
                 </Button>
                 <Button
                   variant="outlined"
@@ -1350,7 +1361,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   style={{ paddingLeft: 10, paddingRight: 10, marginRight: 10 }}
                   onClick={props.action}
                 >
-                  <Typography color="secondary">배달처리</Typography>
+                  <Typography color="info">배달처리</Typography>
                 </Button>
                 <Button
                   variant="outlined"
@@ -1383,7 +1394,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   style={{ paddingLeft: 10, paddingRight: 10, marginRight: 10 }}
                   onClick={props.action}
                 >
-                  <Typography color="secondary">포장완료</Typography>
+                  <Typography color="info">포장완료</Typography>
                 </Button>
                 <Button
                   variant="outlined"
@@ -1416,7 +1427,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   style={{ paddingLeft: 10, paddingRight: 10, marginRight: 10 }}
                   onClick={props.action}
                 >
-                  <Typography color="secondary">배달완료</Typography>
+                  <Typography color="info">배달완료</Typography>
                 </Button>
                 <IconButton
                   color="primary"

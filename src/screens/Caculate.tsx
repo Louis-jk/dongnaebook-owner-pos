@@ -1,9 +1,15 @@
-import React from 'react';
-import { Box, Typography, Tabs, Tab, AppBar, Divider } from '@material-ui/core';
-import Header from '../components/Header';
-import Calculate01 from '../components/Calculate01';
-import Calculate02 from '../components/Calculate02';
-import { theme, MainBox, baseStyles, ModalCancelButton, ModalConfirmButton } from '../styles/base';
+import React from "react";
+import { Box, Typography, Tabs, Tab, AppBar, Divider } from "@material-ui/core";
+import Header from "../components/Header";
+import Calculate01 from "../components/Calculate01";
+import Calculate02 from "../components/Calculate02";
+import {
+  theme,
+  MainBox,
+  baseStyles,
+  ModalCancelButton,
+  ModalConfirmButton,
+} from "../styles/base";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -34,7 +40,7 @@ function TabPanel(props: TabPanelProps) {
 function a11yProps(index: any) {
   return {
     id: `nav-tab-${index}`,
-    'aria-controls': `nav-tabpanel-${index}`,
+    "aria-controls": `nav-tabpanel-${index}`,
   };
 }
 
@@ -72,14 +78,13 @@ function LinkTab(props: LinkTabProps) {
 //   },
 //   appBar: {
 //     backgroundColor: theme.palette.background.paper,
-//     color: theme.palette.text.secondary,
+//     color: theme.palette.text.info,
 //     fontSize: 15,
 //     boxShadow: 'none',
 //   }
 // }));
 
 export default function Calculate(props: any) {
-
   const base = baseStyles();
   const [value, setValue] = React.useState(0);
 
@@ -90,13 +95,27 @@ export default function Calculate(props: any) {
   return (
     <Box component="div" className={base.root}>
       <Header type="calculate" />
-      <MainBox component='main' sx={{ flexGrow: 1, p: 3 }} style={{ borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}>
-        <AppBar position="static" style={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
+      <MainBox
+        component="main"
+        sx={{ flexGrow: 1, p: 3 }}
+        style={{ borderTopLeftRadius: 10, borderBottomLeftRadius: 10 }}
+      >
+        <AppBar
+          position="static"
+          style={{ backgroundColor: "transparent", boxShadow: "none" }}
+        >
           <div>
-            <h3 style={{ color: '#222' }}>7월 정산 금액</h3>
-            <p style={{ fontSize: 24, color: '#222' }}>5,795,000원</p>
+            <h3 style={{ color: "#222" }}>7월 정산 금액</h3>
+            <p style={{ fontSize: 24, color: "#222" }}>5,795,000원</p>
           </div>
-          <Divider style={{ background: theme.palette.secondary.main, height: 2, marginTop: 10, marginBottom: 10 }} />
+          <Divider
+            style={{
+              background: theme.palette.info.main,
+              height: 2,
+              marginTop: 10,
+              marginBottom: 10,
+            }}
+          />
           <Tabs
             variant="fullWidth"
             value={value}
