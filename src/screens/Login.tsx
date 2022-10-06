@@ -1,17 +1,14 @@
 import * as React from "react";
-import clsx from "clsx";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 // Material UI Components
 import {
   Box,
-  Typography,
   TextField,
   FormControlLabel,
   Checkbox,
   IconButton,
-  Button,
 } from "@material-ui/core";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
@@ -19,14 +16,13 @@ import { styled } from "@mui/material/styles";
 
 // Material UI Icons
 import CloseIcon from "@material-ui/icons/Close";
-import DragHandleIcon from "@material-ui/icons/DragHandle";
 import MinimizeIcon from "@material-ui/icons/Minimize";
 
 // Local Component
 import Logo from "../assets/images/logo.png";
 import Api from "../Api";
 import * as loginAction from "../redux/actions/loginAction";
-import { getToken, onMessageListener } from "../firebaseConfig";
+import { getToken } from "../firebaseConfig";
 import { LoginContainer, baseStyles, LoginButton } from "../styles/base";
 import appRuntime from "../appRuntime";
 
@@ -41,8 +37,6 @@ export default function Login() {
   const dispatch = useDispatch();
   const history = useHistory();
   const base = baseStyles();
-
-  const { mt_id, mt_jumju_code } = useSelector((state: any) => state.login);
 
   const [token, setToken] = React.useState("");
   const [values, setValues] = React.useState<State>({
@@ -160,6 +154,11 @@ export default function Login() {
   React.useEffect(() => {
     getToken(setToken);
     getElectronToken(); // 일렉트론 빌드시 토큰 가져오기 : web 테스트시 끄기
+
+    return () => {
+      getToken(setToken);
+      getElectronToken(); // 일렉트론 빌드시 토큰 가져오기 : web 테스트시 끄기
+    };
   }, []);
 
   // 윈도우 닫기 핸들러

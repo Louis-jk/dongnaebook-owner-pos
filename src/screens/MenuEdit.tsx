@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Draggable from "react-draggable";
 
 // Material UI Components
@@ -25,9 +25,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/core/Alert";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -38,7 +35,6 @@ import QueueIcon from "@material-ui/icons/Queue";
 import PostAddIcon from "@material-ui/icons/PostAdd";
 import AddPhotoAlternateOutlinedIcon from "@material-ui/icons/AddPhotoAlternateOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 // Local Component
 import Api from "../Api";
@@ -54,11 +50,6 @@ interface IDetails {
   [key: string]: string;
 }
 
-interface ISelectOption {
-  value: string;
-  price: string;
-}
-
 interface IOption {
   [key: string]: string;
 }
@@ -68,11 +59,6 @@ interface MenuOption {
   select: IOption[];
 }
 
-interface DeleteType {
-  type: string;
-  parent: number;
-  child: number;
-}
 interface ICategory {
   label: string;
   value: string;
@@ -101,7 +87,6 @@ export default function MenuEdit(props: IProps) {
   const menu = MenuStyles();
 
   const { id } = useParams<{ id?: string }>();
-  const history = useHistory();
   const [isLoading, setLoading] = useState(false);
   const [details, setDetails] = useState<IDetails>({});
   const [category, setCategory] = useState(""); // 카테고리 지정값
@@ -382,6 +367,11 @@ export default function MenuEdit(props: IProps) {
   React.useEffect(() => {
     getCategoryHandler();
     getMenusDetailHandler();
+
+    return () => {
+      getCategoryHandler();
+      getMenusDetailHandler();
+    };
   }, []);
 
   const isEmptyObj = (obj: any) => {
@@ -407,7 +397,7 @@ export default function MenuEdit(props: IProps) {
 
       // 기본옵션 - 세부옵션 유무 체크
       if (options && options.length > 0) {
-        options.map((option) => {
+        options.map((option: MenuOption) => {
           if (option.name === "" || option.name === null) {
             setToastState({
               msg: "기본옵션에 옵션명이 없습니다.",
@@ -418,7 +408,7 @@ export default function MenuEdit(props: IProps) {
             return false;
           }
 
-          option.select.map((item) => {
+          option.select.map((item: IOption) => {
             if (item.value === "" || item.value === null) {
               setToastState({
                 msg: "기본옵션에 세부옵션이 없습니다.",
@@ -426,8 +416,10 @@ export default function MenuEdit(props: IProps) {
               });
               handleOpenAlert();
               isExistDefaultDetailOption = false;
+              return;
             } else {
               isExistDefaultDetailOption = true;
+              return;
             }
           });
         });

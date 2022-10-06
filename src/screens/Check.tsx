@@ -54,9 +54,13 @@ export default function Check() {
         const jsonToken = JSON.parse(getToken);
         const storageToken = jsonToken.token;
 
+        console.log("====================================");
+        console.log(":: Check ::");
+        console.log("userId :", userId);
         console.log("userId :", userId);
         console.log("userPwd :", userPwd);
         console.log("storageToken :", storageToken);
+        console.log("====================================");
 
         onLoginHandler(userId, userPwd, storageToken);
       } else {
@@ -71,6 +75,8 @@ export default function Check() {
 
   useEffect(() => {
     getStorage();
+
+    return () => getStorage();
   }, []);
 
   return (

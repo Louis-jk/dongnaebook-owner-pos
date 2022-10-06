@@ -28,7 +28,7 @@ interface IProps {
   isClose: () => void;
 }
 
-const PORT_LIST = ["COM1", "COM2", "COM3", "COM4", "COM5"];
+// const PORT_LIST = ["COM1", "COM2", "COM3", "COM4", "COM5"];
 const BAUD_RATE = [
   110, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200,
 ];

@@ -3,13 +3,7 @@ import { Box, Typography, Tabs, Tab, AppBar, Divider } from "@material-ui/core";
 import Header from "../components/Header";
 import Calculate01 from "../components/Calculate01";
 import Calculate02 from "../components/Calculate02";
-import {
-  theme,
-  MainBox,
-  baseStyles,
-  ModalCancelButton,
-  ModalConfirmButton,
-} from "../styles/base";
+import { theme, MainBox, baseStyles } from "../styles/base";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -28,11 +22,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`nav-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box p={3}>{children}</Box>}
     </div>
   );
 }

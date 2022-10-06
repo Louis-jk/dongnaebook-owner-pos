@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory, useLocation } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
+// import { useReactToPrint } from "react-to-print";
 import clsx from "clsx";
 
 // Material UI Components
@@ -14,8 +14,6 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import MenuIcon from "@material-ui/icons/Menu";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -23,21 +21,17 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Radio from "@material-ui/core/Radio";
-import AppsIcon from "@material-ui/icons/Apps";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import PrintIcon from "@material-ui/icons/Print";
-import DoneIcon from "@material-ui/icons/Done";
 import CloseIcon from "@material-ui/icons/Close";
-import DragHandleIcon from "@material-ui/icons/DragHandle";
 import MinimizeIcon from "@material-ui/icons/Minimize";
-import FormGroup from "@material-ui/core/FormGroup";
 import Badge from "@material-ui/core/Badge";
 import Fade from "@material-ui/core/Fade";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
-import Switch, { SwitchProps } from "@material-ui/core/Switch";
+import Switch from "@material-ui/core/Switch";
 
 // Material icons
 import AccessTimeOutlinedIcon from "@material-ui/icons/AccessTimeOutlined";
@@ -51,12 +45,10 @@ import RateReviewOutlinedIcon from "@material-ui/icons/RateReviewOutlined";
 import LogoutOutlinedIcon from "@material-ui/icons/LogoutOutlined";
 import StopCircleOutlinedIcon from "@material-ui/icons/StopCircleOutlined";
 import RadioButtonCheckedIcon from "@material-ui/icons/RadioButtonChecked";
-import StoreIcon from "@material-ui/icons/Store";
 import SettingsIcon from "@mui/icons-material/Settings";
 
 // Local Component
 import PrintModal from "./PrintModal";
-// import OrderPrint from '../components/ComponentToPrint';
 import * as storeAction from "../redux/actions/storeAction";
 import * as loginAction from "../redux/actions/loginAction";
 import * as orderAction from "../redux/actions/orderAction";
@@ -67,7 +59,6 @@ import {
   ModalConfirmButton,
   ModalCancelButton,
 } from "../styles/base";
-import Logo from "../assets/images/logo.png";
 import CloseStoreModal from "./CloseStoreModal"; // 영업중지 모달
 import Api from "../Api";
 import appRuntime from "../appRuntime";
@@ -117,22 +108,15 @@ const Android12Switch = styled(Switch)(({ theme }) => ({
 }));
 
 export default function ResponsiveDrawer(props: OptionalProps) {
-  // console.log("Header props data >>>", props);
   const { window } = props;
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
   const base = baseStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false); // 메뉴 드로어
-  const {
-    id: mt_store_id,
-    mt_id,
-    mt_jumju_code,
-    mt_store,
-    mt_app_token,
-    do_jumju_origin_use,
-  } = useSelector((state: any) => state.login);
-  const { allStore, closedStore } = useSelector((state: any) => state.store);
+  const { mt_id, mt_jumju_code, mt_store, mt_app_token, do_jumju_origin_use } =
+    useSelector((state: any) => state.login);
+  const { allStore } = useSelector((state: any) => state.store);
   const { newOrder, checkOrder, deliveryOrder, doneOrder } = useSelector(
     (state: any) => state.order
   );
@@ -172,7 +156,6 @@ export default function ResponsiveDrawer(props: OptionalProps) {
     setCurPathName(slice);
   }, [location]);
 
-  // tooltip
   // tooltip
   const BootstrapTooltip = styled(({ className, ...props }: TooltipProps) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -214,10 +197,10 @@ export default function ResponsiveDrawer(props: OptionalProps) {
   };
 
   // 프린트 출력 부분
-  const componentRef = React.useRef(null);
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
+  // const componentRef = React.useRef(null);
+  // const handlePrint = useReactToPrint({
+  //   content: () => componentRef.current,
+  // });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value);
@@ -229,12 +212,12 @@ export default function ResponsiveDrawer(props: OptionalProps) {
   };
 
   // 현재 신규주문 건수 가져오기
-  const getNewOrderHandler = () => {
+  const getNewOrderHandler = (id: string, code: string) => {
     const param = {
       item_count: 0,
       limit_count: 10,
-      jumju_id: mt_id,
-      jumju_code: mt_jumju_code,
+      jumju_id: id,
+      jumju_code: code,
       od_process_status: "신규주문",
     };
     Api.send("store_order_list", param, (args: any) => {
@@ -327,7 +310,9 @@ export default function ResponsiveDrawer(props: OptionalProps) {
   };
 
   React.useEffect(() => {
-    getNewOrderHandler();
+    getNewOrderHandler(mt_id, mt_jumju_code);
+
+    return () => getNewOrderHandler(mt_id, mt_jumju_code);
   }, [mt_id, mt_jumju_code]);
 
   // 매장 선택 드로어 핸들러
@@ -402,7 +387,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
 
     Api.send("store_origin_update", param, (args: any) => {
       let resultItem = args.resultItem;
-      let arrItems = args.arrItems;
+      // let arrItems = args.arrItems;
 
       if (resultItem.result === "Y") {
         // console.log('origin update arrItems', arrItems);
@@ -414,12 +399,12 @@ export default function ResponsiveDrawer(props: OptionalProps) {
   };
 
   // 프린트 정보
-  const openPrint = () => {
-    appRuntime.send("openPrint", "print info?");
-    appRuntime.on("printInfo", (event: any, data: any) => {
-      console.log("print info data ::", data);
-    });
-  };
+  // const openPrint = () => {
+  //   appRuntime.send("openPrint", "print info?");
+  //   appRuntime.on("printInfo", (event: any, data: any) => {
+  //     console.log("print info data ::", data);
+  //   });
+  // };
 
   const menuControlHandler = (payload: string) => {
     dispatch(menuControlAction.updateMenuSelect(payload));
@@ -449,9 +434,9 @@ export default function ResponsiveDrawer(props: OptionalProps) {
     appRuntime.send("windowMinimize", "minimize");
   };
 
-  const sendNotify = () => {
-    appRuntime.send("notification", "test");
-  };
+  // const sendNotify = () => {
+  //   appRuntime.send("notification", "test");
+  // };
 
   // 메뉴 드로어
   const drawer = (
@@ -511,6 +496,11 @@ export default function ResponsiveDrawer(props: OptionalProps) {
           sx={{ padding: 0 }}
         >
           {/* 신규주문 메뉴 */}
+          {/* <OrderStepSideBar
+            route="order_new"
+            pathName="order_new"
+            data={newOrder}
+          /> */}
           <ListItem
             className={base.orderMenu}
             component={Link}
@@ -534,7 +524,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   newOrder.length > 0 &&
                   curPathName !== "order_new" &&
                   props.detail !== "order_new"
-                    ? theme.palette.primary.main
+                    ? theme.palette.secondary.main
                     : newOrder.length > 0 &&
                       (curPathName === "order_new" ||
                         props.detail === "order_new")
@@ -557,7 +547,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   newOrder.length > 0 &&
                   curPathName !== "order_new" &&
                   props.detail !== "order_new"
-                    ? theme.palette.primary.main
+                    ? theme.palette.secondary.main
                     : newOrder.length > 0 &&
                       (curPathName === "order_new" ||
                         props.detail === "order_new")
@@ -575,6 +565,11 @@ export default function ResponsiveDrawer(props: OptionalProps) {
           {/* // 신규주문 메뉴 */}
 
           {/* 접수완료 메뉴 */}
+          {/* <OrderStepSideBar
+            route="order_check"
+            pathName="order_check"
+            data={checkOrder}
+          /> */}
           <ListItem
             className={base.orderMenu}
             component={Link}
@@ -603,7 +598,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   curPathName !== "order_check" &&
                   props.detail !== "order_check_delivery" &&
                   props.detail !== "order_check_takeout"
-                    ? theme.palette.primary.main
+                    ? theme.palette.secondary.main
                     : checkOrder.length > 0 &&
                       (curPathName === "order_check" ||
                         props.detail === "order_check_delivery" ||
@@ -629,7 +624,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   curPathName !== "order_check" &&
                   props.detail !== "order_check_delivery" &&
                   props.detail !== "order_check_takeout"
-                    ? theme.palette.primary.main
+                    ? theme.palette.secondary.main
                     : checkOrder.length > 0 &&
                       (curPathName === "order_check" ||
                         props.detail === "order_check_delivery" ||
@@ -649,6 +644,11 @@ export default function ResponsiveDrawer(props: OptionalProps) {
           {/* // 접수완료 메뉴 */}
 
           {/* 배달중 메뉴 */}
+          {/* <OrderStepSideBar
+            route="order_delivery"
+            pathName="order_delivery"
+            data={deliveryOrder}
+          /> */}
           <ListItem
             className={base.orderMenu}
             component={Link}
@@ -674,7 +674,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   deliveryOrder.length > 0 &&
                   curPathName !== "order_delivery" &&
                   props.detail !== "order_delivery"
-                    ? theme.palette.primary.main
+                    ? theme.palette.secondary.main
                     : deliveryOrder.length > 0 &&
                       (curPathName === "order_delivery" ||
                         props.detail === "order_delivery")
@@ -697,7 +697,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   deliveryOrder.length > 0 &&
                   curPathName !== "order_delivery" &&
                   props.detail !== "order_delivery"
-                    ? theme.palette.primary.main
+                    ? theme.palette.secondary.main
                     : deliveryOrder.length > 0 &&
                       (curPathName === "order_delivery" ||
                         props.detail === "order_delivery")
@@ -714,7 +714,12 @@ export default function ResponsiveDrawer(props: OptionalProps) {
           </ListItem>
           {/* // 배달중 메뉴 */}
 
-          {/* 배달/포장완료 메뉴 */}
+          {/* 처리완료 메뉴 */}
+          {/* <OrderStepSideBar
+            route="order_done"
+            pathName="order_done"
+            data={doneOrder}
+          /> */}
           <ListItem
             className={base.orderMenu}
             component={Link}
@@ -738,7 +743,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   doneOrder.length > 0 &&
                   curPathName !== "order_done" &&
                   props.detail !== "order_done"
-                    ? theme.palette.primary.main
+                    ? theme.palette.secondary.main
                     : doneOrder.length > 0 &&
                       (curPathName === "order_done" ||
                         props.detail === "order_done")
@@ -761,7 +766,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
                   doneOrder.length > 0 &&
                   curPathName !== "order_done" &&
                   props.detail !== "order_done"
-                    ? theme.palette.primary.main
+                    ? theme.palette.secondary.main
                     : doneOrder.length > 0 &&
                       (curPathName === "order_done" ||
                         props.detail === "order_done")
@@ -776,7 +781,7 @@ export default function ResponsiveDrawer(props: OptionalProps) {
               {doneOrder.length > 99 ? "99+" : doneOrder.length}
             </Typography>
           </ListItem>
-          {/* // 배달/포장완료 메뉴 */}
+          {/* // 처리완료 메뉴 */}
         </List>
       ) : selectType === "store" ? (
         <List
@@ -806,14 +811,14 @@ export default function ResponsiveDrawer(props: OptionalProps) {
           <ListItem
             className={base.orderMenu02}
             component={Link}
-            to="/caculate"
+            to="/calculate"
             style={{
               color:
-                curPathName === "caculate"
+                curPathName === "calculate"
                   ? theme.palette.info.main
                   : theme.palette.info.contrastText,
               backgroundColor:
-                curPathName === "caculate" ? "#fff" : "transparent",
+                curPathName === "calculate" ? "#fff" : "transparent",
             }}
           >
             <Box display="flex" flexDirection="row">
@@ -850,12 +855,14 @@ export default function ResponsiveDrawer(props: OptionalProps) {
             style={{
               color:
                 curPathName === "menu" ||
+                props.type === "menu" ||
                 props.type === "menuEdit" ||
                 props.type === "menuAdd"
                   ? theme.palette.info.main
                   : theme.palette.info.contrastText,
               backgroundColor:
                 curPathName === "menu" ||
+                props.type === "menu" ||
                 props.type === "menuEdit" ||
                 props.type === "menuAdd"
                   ? "#fff"

@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 
 // Material UI Components
-import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -148,6 +147,8 @@ export default function Main(props: any) {
 
   useEffect(() => {
     getStoreHandler();
+
+    return () => getStoreHandler();
   }, []);
 
   return (

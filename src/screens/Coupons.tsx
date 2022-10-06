@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import clsx from "clsx";
 import { useSelector } from "react-redux";
 
@@ -19,8 +19,6 @@ import Pagination from "@material-ui/core/Pagination";
 import Stack from "@material-ui/core/Stack";
 
 // Material icons
-import IconButton from "@material-ui/core/IconButton";
-import CloseRoundedIcon from "@material-ui/icons/CloseRounded";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 // Local Component
@@ -34,14 +32,6 @@ import {
   ModalConfirmButton,
 } from "../styles/base";
 import { CouponStyles } from "../styles/custom";
-
-interface State {
-  amount: string;
-  password: string;
-  weight: string;
-  weightRange: string;
-  showPassword: boolean;
-}
 
 interface ICoupon {
   cz_download: string;
@@ -128,7 +118,7 @@ export default function Tips(props: any) {
 
     Api.send("store_couponzone_delete", param, (args: any) => {
       let resultItem = args.resultItem;
-      let arrItems = args.arrItems;
+      // let arrItems = args.arrItems;
 
       if (resultItem.result === "Y") {
         setToastState({ msg: "쿠폰이 삭제되었습니다.", severity: "success" });
@@ -180,6 +170,8 @@ export default function Tips(props: any) {
 
   useEffect(() => {
     getCouponListHandler();
+
+    return () => getCouponListHandler();
   }, [mt_id, mt_jumju_code, startOfIndex]);
 
   // 페이지 전환 핸들러

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import clsx from "clsx";
 import moment from "moment";
@@ -7,7 +7,6 @@ import { ko } from "date-fns/esm/locale";
 
 // Material UI Components
 import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -44,7 +43,7 @@ interface IList {
   [key: string]: string;
 }
 
-export default function StoreTimeTab01() {
+export default function SetStoreTime01() {
   const { mt_id, mt_jumju_code } = useSelector((state: any) => state.login);
   const base = baseStyles();
   const classes = StoreTimeStyles();
@@ -162,7 +161,7 @@ export default function StoreTimeTab01() {
       setLoading(true);
 
       let resultItem = args.resultItem;
-      let arrItems = args.arrItems;
+      // let arrItems = args.arrItems;
 
       if (resultItem.result === "Y") {
         handleClose();
@@ -219,7 +218,7 @@ export default function StoreTimeTab01() {
       setLoading(true);
 
       let resultItem = args.resultItem;
-      let arrItems = args.arrItems;
+      // let arrItems = args.arrItems;
 
       if (resultItem.result === "Y") {
         handleClose();
@@ -248,6 +247,8 @@ export default function StoreTimeTab01() {
 
   useEffect(() => {
     getStoreTime();
+
+    return () => getStoreTime();
   }, [mt_id, mt_jumju_code]);
 
   console.log("====================================");
@@ -397,59 +398,58 @@ export default function StoreTimeTab01() {
       {/* // 영업시간 적용 범위 질의 모달 */}
 
       {lists !== null && lists.length > 0 ? (
-        <>
-          <Box component="article" style={{ margin: "30px 0" }}>
-            {lists.map((list, index) => (
-              <>
-                <Box
-                  key={index}
-                  className={clsx(base.flexRowBetweenCenter)}
-                  style={{ margin: "10px 0" }}
-                >
-                  <Box className={base.flexRowStartCenter}>
-                    <Box
-                      className={clsx(base.flexRow, base.mr10)}
-                      style={{ minWidth: 200 }}
-                    >
-                      <p
-                        className={base.mr20}
-                        style={{
-                          fontSize: 14,
-                          padding: "2px 10px",
-                          backgroundColor: theme.palette.primary.main,
-                          color: theme.palette.primary.contrastText,
-                          borderRadius: 5,
-                        }}
-                      >
-                        매주
-                      </p>
-                      <p className={base.mr20}>
-                        {list.st_yoil_txt.replaceAll(",", ", ")}
-                      </p>
-                    </Box>
-
-                    <Typography
-                      className={base.mr20}
-                      style={{ minWidth: 100 }}
-                    >{`시작: ${list.st_stime}`}</Typography>
-                    <Typography>{`마감: ${list.st_etime}`}</Typography>
-                  </Box>
-                  <IconButton
-                    color="primary"
-                    aria-label="delete"
-                    component="span"
-                    style={{ alignItems: "flex-end" }}
-                    onClick={() => deleteStoreTimeHandler(list.st_idx)}
+        <Box component="article" style={{ margin: "30px 0" }}>
+          {lists.map((list, index) => (
+            <Box key={index}>
+              <Box
+                className={clsx(base.flexRowBetweenCenter)}
+                style={{ margin: "10px 0" }}
+              >
+                <Box className={base.flexRowStartCenter}>
+                  <Box
+                    className={clsx(base.flexRow, base.mr10)}
+                    style={{ minWidth: 200 }}
                   >
-                    <HighlightOffIcon color="primary" />
-                  </IconButton>
+                    <p
+                      className={base.mr20}
+                      style={{
+                        fontSize: 14,
+                        padding: "2px 10px",
+                        backgroundColor: theme.palette.primary.main,
+                        color: theme.palette.primary.contrastText,
+                        borderRadius: 5,
+                      }}
+                    >
+                      매주
+                    </p>
+                    <p className={base.mr20}>
+                      {list.st_yoil_txt.replaceAll(",", ", ")}
+                    </p>
+                  </Box>
+
+                  <Typography
+                    className={base.mr20}
+                    style={{ minWidth: 100 }}
+                  >{`시작: ${list.st_stime}`}</Typography>
+
+                  <Typography>{`마감: ${list.st_etime}`}</Typography>
                 </Box>
-                <Divider />
-              </>
-            ))}
-          </Box>
-        </>
+                <IconButton
+                  color="primary"
+                  aria-label="delete"
+                  component="span"
+                  style={{ alignItems: "flex-end" }}
+                  onClick={() => deleteStoreTimeHandler(list.st_idx)}
+                >
+                  <HighlightOffIcon color="primary" />
+                </IconButton>
+              </Box>
+              <Divider />
+            </Box>
+          ))}
+        </Box>
       ) : null}
+
       <Typography
         className={clsx(classes.pointTxt, base.mb10)}
         style={{
@@ -464,6 +464,7 @@ export default function StoreTimeTab01() {
           ? "영업 날짜와 시간이 모두 설정되어 있습니다."
           : "영업 날짜와 시간을 설정하실 수 있습니다."}
       </Typography>
+
       <FormControl component="fieldset" style={{ marginBottom: 20 }}>
         <FormGroup aria-label="position" row>
           {DayArr &&
@@ -508,6 +509,7 @@ export default function StoreTimeTab01() {
       >
         영업 시작시간과 마감시간을 설정해주세요.
       </Typography>
+
       <Grid container spacing={3} className={base.mb20}>
         <Grid item xs={6}>
           <LocalizationProvider dateAdapter={AdapterDateFns} locale={ko}>

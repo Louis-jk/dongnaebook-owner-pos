@@ -1,35 +1,34 @@
-import { type } from 'os';
-import types from '../actions/types';
+import types from "../actions/types";
 
 interface loginState {
   [key: string]: string | number;
 }
 
 const defaultState = {
-  id: '',
-  mt_id: '',
-  mt_jumju_code: '',
-  mt_jumju_key: '',
-  mt_name: '',
-  mt_nickname: '',
-  mt_hp: '',
-  mt_email: '',
-  mt_level: '',
-  mt_gubun: '',
+  id: "",
+  mt_id: "",
+  mt_jumju_code: "",
+  mt_jumju_key: "",
+  mt_name: "",
+  mt_nickname: "",
+  mt_hp: "",
+  mt_email: "",
+  mt_level: "",
+  mt_gubun: "",
   mt_point: 0,
-  mt_sound: '',
+  mt_sound: "",
   mt_coupon: 0,
-  mt_print: '',
-  mt_app_token: '',
-  updateTime: '',
-  fcmToken: '',
-  mt_store: '',
-  mt_ca_code: '',
-  mb_ca_name: '',
-  mt_addr: '',
-  mt_lat: '',
-  mt_lng: '',
-  do_jumju_origin_use: '',
+  mt_print: "",
+  mt_app_token: "",
+  updateTime: "",
+  fcmToken: "",
+  mt_store: "",
+  mt_ca_code: "",
+  mb_ca_name: "",
+  mt_addr: "",
+  mt_lat: "",
+  mt_lng: "",
+  do_jumju_origin_use: "",
   mt_alarm_vol: 1,
 };
 

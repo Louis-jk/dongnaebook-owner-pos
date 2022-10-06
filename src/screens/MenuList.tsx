@@ -14,10 +14,7 @@ import Stack from "@material-ui/core/Stack";
 import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/core/Alert";
-import Select from "@material-ui/core/Select";
 import NativeSelect from "@mui/material/NativeSelect";
-import MenuItem from "@material-ui/core/MenuItem";
-import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import InputBase from "@mui/material/InputBase";
 
@@ -477,7 +474,6 @@ export default function MenuList(props: any) {
             )}
             {menuCategory && menuCategory.length > 0 && (
               <FormControl sx={{ m: 1, minWidth: 80 }}>
-                {/* <InputLabel id="demo-simple-select-autowidth-label">전체</InputLabel> */}
                 <NativeSelect
                   value={category}
                   onChange={(e) => handleClick(e.target.value as string)}

@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import clsx from "clsx";
-// import { ko } from "date-fns/esm/locale";
-import moment from "moment";
-import "moment/locale/ko";
 import { ko } from "date-fns/locale";
 
 // Material UI Components
 import List from "@material-ui/core/List";
-import ListItem, { ListItemProps } from "@material-ui/core/ListItem";
+import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";

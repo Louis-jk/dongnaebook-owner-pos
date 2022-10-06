@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import clsx from "clsx";
 
@@ -36,7 +36,7 @@ interface IList {
   [key: string]: string;
 }
 
-export default function StoreTimeTab01() {
+export default function SetStoreTime02() {
   const base = baseStyles();
   const classes = StoreTimeStyles();
   const { mt_id, mt_jumju_code } = useSelector((state: any) => state.login);
@@ -138,7 +138,7 @@ export default function StoreTimeTab01() {
       setLoading(true);
 
       let resultItem = args.resultItem;
-      let arrItems = args.arrItems;
+      // let arrItems = args.arrItems;
 
       if (resultItem.result === "Y") {
         handleClose();
@@ -197,7 +197,7 @@ export default function StoreTimeTab01() {
       setLoading(true);
 
       let resultItem = args.resultItem;
-      let arrItems = args.arrItems;
+      // let arrItems = args.arrItems;
 
       if (resultItem.result === "Y") {
         handleClose();

@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams, useHistory } from "react-router-dom";
 import Draggable from "react-draggable";
-import PropTypes from "prop-types";
-import NumberFormat from "react-number-format";
 
 // Material UI Components
 import Paper, { PaperProps } from "@material-ui/core/Paper";
@@ -58,13 +55,8 @@ interface IMenu {
   ca_name: string;
   ca_code: string;
 }
-interface CustomProps {
-  onChange: (event: { target: { name: string; value: string } }) => void;
-  name: string;
-}
 
 type OptionType = "default" | "add"; // 기본옵션 | 추가 옵션
-type OptionSize = "option" | "detail"; // 옵션 | 세부
 type CheckedType = "1" | "0"; // 가능(true) | 불가능(false)
 
 function PaperComponent(props: PaperProps) {
@@ -81,9 +73,7 @@ function PaperComponent(props: PaperProps) {
 export default function MenuAdd(props: any) {
   const base = baseStyles();
   const menu = MenuStyles();
-  const history = useHistory();
   const { mt_id, mt_jumju_code } = useSelector((state: any) => state.login);
-  const [isLoading, setLoading] = useState(false);
 
   const [category, setCategory] = useState(""); // 카테고리 선택값
   const [menuName, setMenuName] = useState(""); // 메뉴명
@@ -99,7 +89,6 @@ export default function MenuAdd(props: any) {
   const [mainOptionType, setMainOptionType] = useState<OptionType>("default"); // 메인 옵션 타입
   const [mainIndex, setMainIndex] = useState(0); // 메인 옵션 인덱스
   const [optionType, setOptionType] = useState<OptionType>("default"); // 옵션 타입('default' : 기본옵션 | 'add' : 추가옵션)
-  const [optionSize, setOptionSize] = useState<OptionSize>("option"); // 옵션 size
   const [parentIndex, setParentIndex] = useState(0); // 옵션 index
   const [childIndex, setChildIndex] = useState(0); // 세부옵션 index
   const [checked01, setChecked01] = useState<CheckedType>("0"); // 대표메뉴('1' : 지정 | '0': 지정안함)
@@ -174,7 +163,6 @@ export default function MenuAdd(props: any) {
   const [menuCategory, setMenuCategory] = React.useState<ICategory[]>([]);
 
   const getCategoryHandler = () => {
-    setLoading(true);
     const param = {
       jumju_id: mt_id,
       jumju_code: mt_jumju_code,
@@ -187,7 +175,7 @@ export default function MenuAdd(props: any) {
 
       if (resultItem.result === "Y") {
         arrItems.map((menu: IMenu) => {
-          setMenuCategory((prev) => [
+          return setMenuCategory((prev) => [
             ...prev,
             {
               label: menu.ca_name,
@@ -195,16 +183,16 @@ export default function MenuAdd(props: any) {
             },
           ]);
         });
-        setLoading(false);
       } else {
-        setLoading(false);
-        console.log("메뉴를 가져오지 못했습니다.");
+        return console.log("메뉴를 가져오지 못했습니다.");
       }
     });
   };
 
   React.useEffect(() => {
     getCategoryHandler();
+
+    return () => getCategoryHandler();
   }, [mt_id, mt_jumju_code]);
 
   // Toast(Alert) 관리
@@ -308,24 +296,6 @@ export default function MenuAdd(props: any) {
     }
   };
 
-  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setCategory(event.target.value as string);
-  };
-
-  // 옵션 삭제 전 핸들러
-  const optionDeleteConfirmHandler = (
-    size: OptionSize,
-    type: OptionType,
-    parent: number,
-    child: number
-  ) => {
-    setOptionSize(size);
-    setOptionType(type);
-    setParentIndex(parent);
-    setChildIndex(child);
-    setOpen(true);
-  };
-
   // 세부 옵션 삭제 전 핸들러
   const handleClickOpen = (type: OptionType, parent: number, child: number) => {
     setOptionType(type);
@@ -359,7 +329,7 @@ export default function MenuAdd(props: any) {
     } else if (menuName === "") {
       setToastState({ msg: "메뉴명을 입력해주세요.", severity: "error" });
       handleOpenAlert();
-    } else if (menuPrice === "" || menuPrice == "0") {
+    } else if (menuPrice === "" || menuPrice === "0") {
       setToastState({ msg: "판매가격을 입력해주세요.", severity: "error" });
       handleOpenAlert();
     } else {
@@ -368,7 +338,7 @@ export default function MenuAdd(props: any) {
 
       // 기본옵션 - 세부옵션 유무 체크
       if (options && options.length > 0) {
-        options.map((option) => {
+        options.map((option: MenuOption) => {
           if (option.name === "" || option.name === null) {
             setToastState({
               msg: "기본옵션에 옵션명이 없습니다.",
@@ -379,7 +349,7 @@ export default function MenuAdd(props: any) {
             return false;
           }
 
-          option.select.map((item) => {
+          option.select.map((item: IOption) => {
             if (item.value === "" || item.value === null) {
               setToastState({
                 msg: "기본옵션에 세부옵션명이 없습니다.",
@@ -387,8 +357,10 @@ export default function MenuAdd(props: any) {
               });
               handleOpenAlert();
               isExistDefaultDetailOption = false;
+              return;
             } else {
               isExistDefaultDetailOption = true;
+              return;
             }
           });
         });
@@ -396,7 +368,7 @@ export default function MenuAdd(props: any) {
 
       // 추가옵션 - 세부옵션 유무 체크
       if (addOptions && addOptions.length > 0) {
-        addOptions.map((option) => {
+        addOptions.map((option: MenuOption) => {
           if (option.name === "" || option.name === null) {
             setToastState({
               msg: "추가옵션에 옵션명이 없습니다.",
@@ -407,7 +379,7 @@ export default function MenuAdd(props: any) {
             return false;
           }
 
-          option.select.map((item) => {
+          option.select.map((item: IOption) => {
             if (item.value === "" || item.value === null) {
               setToastState({
                 msg: "추가옵션에 세부옵션명이 없습니다.",
@@ -419,6 +391,8 @@ export default function MenuAdd(props: any) {
               isExistAddDetailOption = true;
             }
           });
+
+          return;
         });
       }
 
@@ -428,13 +402,11 @@ export default function MenuAdd(props: any) {
       let filterNameArr02: string[] = []; // 추가옵션 name값을 담을 새 배열
       let isExistSameValue02: boolean = false; // 추가옵션 같은 옵션명 있는지 체크
 
-      options?.map((option: any, i: number) => {
-        filterNameArr.push(option.name);
-      });
+      options?.map((option: any, i: number) => filterNameArr.push(option.name));
 
-      addOptions?.map((option: any, i: number) => {
-        filterNameArr02.push(option.name);
-      });
+      addOptions?.map((option: any, i: number) =>
+        filterNameArr02.push(option.name)
+      );
 
       // 기본옵션 같은 값 찾기
       for (let i = 0; i < filterNameArr.length; i++) {

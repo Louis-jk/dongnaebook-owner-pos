@@ -61,6 +61,8 @@ export default function OrderNew() {
   useEffect(() => {
     // refreshPage();
     getOrderListHandler();
+
+    return () => getOrderListHandler();
   }, [mt_id, mt_jumju_code, newOrder]);
 
   console.log("주문 리스트", list);

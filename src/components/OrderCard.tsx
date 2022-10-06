@@ -1,6 +1,6 @@
 import React from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import {
   Box,
   Typography,
@@ -32,10 +32,8 @@ interface OrderProps {
 
 export default function OrderCard(props: OrderProps) {
   const { orders, type } = props;
-  const { mt_id, mt_jumju_code } = useSelector((state: any) => state.login);
   const history = useHistory();
   const dispatch = useDispatch();
-  const params = useParams();
 
   const [odId, setOdId] = React.useState(""); // 주문 id
   const [currJumjuId, setCurrJumjuId] = React.useState(""); // 주문 해당 jumju_id
@@ -182,7 +180,7 @@ export default function OrderCard(props: OrderProps) {
 
   const renderList = (): JSX.Element[] => {
     return orders.map((order, index) => (
-      <Grid xs={12} key={order.od_id + index}>
+      <Grid item xs={12} key={order.od_id + index}>
         {/* <Link to={`/details/${order.od_id}`}> */}
         <Box
           display="flex"
@@ -218,8 +216,6 @@ export default function OrderCard(props: OrderProps) {
             alignItems="center"
           >
             <Box>
-              {/* 배달주문 / 포장주문 마커 */}
-              {console.log("order.od_type?", order.od_type)}
               <Box
                 style={{
                   width: "fit-content",
@@ -311,14 +307,6 @@ export default function OrderCard(props: OrderProps) {
               )}
             </Box>
           </Box>
-          {/* {
-            type === 'done' &&
-            <Box display='flex' flex={1} justifyContent='center' alignSelf='center'>
-              <Box style={{ padding: '5px 20px', borderRadius: 5, backgroundColor: order.od_type === '배달' ? theme.palette.primary.main : theme.palette.info.main }}>
-                <Typography variant='body1' fontWeight='bold' color={order.od_type === '배달' ? theme.palette.primary.contrastText : theme.palette.info.contrastText}>{order.od_type === '배달' ? '배달주문' : '포장주문'}</Typography>
-              </Box>
-            </Box>
-          } */}
 
           <Box
             display="flex"
@@ -366,7 +354,7 @@ export default function OrderCard(props: OrderProps) {
                 <Button
                   variant="contained"
                   style={{
-                    backgroundColor: "#edecf3",
+                    backgroundColor: theme.palette.info.main,
                     color: theme.palette.primary.contrastText,
                     minWidth: 120,
                     width: "100%",
@@ -396,7 +384,10 @@ export default function OrderCard(props: OrderProps) {
                         : "primary"
                     }
                     style={{
-                      color: theme.palette.primary.contrastText,
+                      color:
+                        order.od_type === "식사"
+                          ? theme.palette.secondary.contrastText
+                          : theme.palette.primary.contrastText,
                       minWidth: 120,
                       height: 75,
                       boxShadow: "none",
@@ -454,6 +445,27 @@ export default function OrderCard(props: OrderProps) {
                   >
                     포장완료
                   </Button>
+                ) : type === "check" && order.od_type === "식사" ? (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    style={{
+                      color: theme.palette.secondary.contrastText,
+                      minWidth: 120,
+                      height: 75,
+                      boxShadow: "none",
+                    }}
+                    onClick={() =>
+                      deliveryOrderHandler(
+                        order.od_id,
+                        order.jumju_id,
+                        order.jumju_code,
+                        order.od_type
+                      )
+                    }
+                  >
+                    식사완료
+                  </Button>
                 ) : type === "delivery" && order.od_type === "배달" ? (
                   <Button
                     variant="contained"
@@ -482,7 +494,8 @@ export default function OrderCard(props: OrderProps) {
                     variant="contained"
                     color="secondary"
                     style={{
-                      color: theme.palette.secondary.contrastText,
+                      background: "#999",
+                      color: "#fff",
                       minWidth: 120,
                       height: 75,
                       boxShadow: "none",
@@ -502,7 +515,9 @@ export default function OrderCard(props: OrderProps) {
                     variant="contained"
                     color="secondary"
                     style={{
-                      color: theme.palette.secondary.contrastText,
+                      background: "#999",
+                      color: "#fff",
+                      // color: theme.palette.secondary.contrastText,
                       minWidth: 120,
                       height: 75,
                       boxShadow: "none",

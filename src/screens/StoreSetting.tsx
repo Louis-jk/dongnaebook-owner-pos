@@ -21,6 +21,7 @@ import VolumeDown from "@mui/icons-material/VolumeDown";
 import VolumeUp from "@mui/icons-material/VolumeUp";
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import InputAdornment from "@material-ui/core/InputAdornment";
 
 // Local Component
 import Header from "../components/Header";
@@ -106,8 +107,16 @@ export default function StoreInfo(props: IProps) {
   const [setting, setSetting] = React.useState<IStoreSetting>({
     do_coupon_use: "", // 쿠폰 사용 가능 여부 'Y' | 'N'
     do_take_out: "", // 포장 가능 여부 'Y' | 'N'
+    do_for_here: "", // 먹고가기 가능 여부 'Y' | 'N'
+    do_delivery: "", // 배달 가능 여부 'Y' | 'N'
     mt_print: "", // 자동출력 '1', 출력안함 '0'
     mt_sound: "", // 사운드 울림 횟수
+    do_min_price: "0", // 배달 최소 주문 금액
+    do_min_price_wrap: "0", // 포장 최소 주문 금액
+    do_take_out_discount: "0", // 포장 할인 금액
+    do_min_price_for_here: "0", // 먹고가기 최소 주문 금액
+    do_for_here_discount: "0", // 먹고가기 할인 금액
+    do_for_here_minimum: "0", // 먹고가기 최소인원
   });
 
   const getStoreSetting = () => {
@@ -116,7 +125,7 @@ export default function StoreInfo(props: IProps) {
       jumju_code: mt_jumju_code,
     };
 
-    Api.send("store_setting", param, (args: any) => {
+    Api.send("store_guide", param, (args: any) => {
       let resultItem = args.resultItem;
       let arrItems = args.arrItems;
 
@@ -127,20 +136,36 @@ export default function StoreInfo(props: IProps) {
         console.log("arrItems", arrItems);
         setStoreInit(true);
         setSetting({
+          do_delivery: arrItems.do_delivery,
           do_take_out: arrItems.do_take_out,
           do_coupon_use: arrItems.do_coupon_use,
+          do_for_here: arrItems.do_for_here,
           mt_sound: arrItems.mt_sound,
           mt_print: arrItems.mt_print,
+          do_min_price: arrItems.do_min_price,
+          do_min_price_wrap: arrItems.do_min_price_wrap,
+          do_take_out_discount: arrItems.do_take_out_discount,
+          do_min_price_for_here: arrItems.do_min_price_for_here,
+          do_for_here_discount: arrItems.do_for_here_discount,
+          do_for_here_minimum: arrItems.do_for_here_minimum,
         });
         setVolume(arrItems.mt_alarm_vol * 100);
         setLoading(false);
       } else {
         setStoreInit(false);
         setSetting({
+          do_delivery: "",
           do_take_out: "",
           do_coupon_use: "",
+          do_for_here: "",
           mt_sound: "",
           mt_print: "",
+          do_min_price: "",
+          do_min_price_wrap: "",
+          do_take_out_discount: "",
+          do_min_price_for_here: "",
+          do_for_here_discount: "",
+          do_for_here_minimum: "",
         });
         setVolume(0);
         setLoading(false);
@@ -170,6 +195,14 @@ export default function StoreInfo(props: IProps) {
       mt_print: setting.mt_print,
       RangeType: range,
       mt_alarm_vol: volume / 100,
+      do_min_price: setting.do_min_price,
+      do_delivery: setting.do_delivery,
+      do_min_price_wrap: setting.do_min_price_wrap,
+      do_take_out_discount: setting.do_take_out_discount,
+      do_min_price_for_here: setting.do_min_price_for_here,
+      do_for_here: setting.do_for_here,
+      do_for_here_discount: setting.do_for_here_discount,
+      do_for_here_minimum: setting.do_for_here_minimum,
     };
 
     console.log("매장설정 업데이트 param", param);
@@ -467,46 +500,362 @@ export default function StoreInfo(props: IProps) {
               </RadioGroup>
             </FormControl>
           </Grid>
-          <Grid item xs={12} md={6} mb={2}>
-            <Typography fontWeight="bold">주문 포장 가능 여부</Typography>
-            <FormControl component="fieldset">
-              <RadioGroup
-                row
-                aria-label="position"
-                name="position"
-                defaultValue="N"
-              >
-                <FormControlLabel
-                  value={"Y"}
-                  checked={setting.do_take_out === "Y" ? true : false}
-                  control={<Radio color="primary" style={{ paddingLeft: 0 }} />}
-                  label="포장가능"
-                  labelPlacement="start"
-                  style={{ width: 150, margin: 0, flexDirection: "row" }}
-                  onChange={(e) =>
-                    setSetting({
-                      ...setting,
-                      do_take_out: "Y",
-                    })
-                  }
+
+          {/* 배달 가능 여부 */}
+          <Grid container>
+            <Grid item xs={12} md={5} mb={2}>
+              <Typography fontWeight="bold">배달 가능 여부</Typography>
+              <FormControl component="fieldset">
+                <RadioGroup
+                  row
+                  aria-label="position"
+                  name="position"
+                  defaultValue="N"
+                >
+                  <FormControlLabel
+                    value={"Y"}
+                    checked={setting.do_delivery === "Y" ? true : false}
+                    control={
+                      <Radio color="primary" style={{ paddingLeft: 0 }} />
+                    }
+                    label="배달가능"
+                    labelPlacement="start"
+                    style={{ width: 150, margin: 0, flexDirection: "row" }}
+                    onChange={(e) =>
+                      setSetting({
+                        ...setting,
+                        do_delivery: "Y",
+                      })
+                    }
+                  />
+                  <FormControlLabel
+                    value={"N"}
+                    checked={setting.do_delivery === "N" ? true : false}
+                    control={
+                      <Radio color="primary" style={{ paddingLeft: 0 }} />
+                    }
+                    label="배달불가능"
+                    labelPlacement="start"
+                    style={{ width: 150, margin: 0, flexDirection: "row" }}
+                    onChange={(e) =>
+                      setSetting({
+                        ...setting,
+                        do_delivery: "N",
+                      })
+                    }
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+            {setting.do_delivery === "Y" && (
+              <Grid item xs={12} md={2} mb={2}>
+                {/* <Typography fontWeight="bold">배달 최소 주문 금액</Typography> */}
+                <TextField
+                  value={!setting.do_min_price ? "0" : setting.do_min_price}
+                  fullWidth
+                  id="outlined-basic"
+                  variant="outlined"
+                  label="배달 최소 주문 금액"
+                  placeholder="배달 최소 주문 금액을 입력해주세요."
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">원</InputAdornment>
+                    ),
+                  }}
+                  onChange={(e) => {
+                    const re = /^[0-9\b]+$/;
+                    if (e.target.value === "" || re.test(e.target.value)) {
+                      let changed = e.target.value.replace(/(^0+)/, "");
+                      setSetting({
+                        ...setting,
+                        do_min_price: changed,
+                      });
+                    }
+                  }}
                 />
-                <FormControlLabel
-                  value={"N"}
-                  checked={setting.do_take_out === "N" ? true : false}
-                  control={<Radio color="primary" style={{ paddingLeft: 0 }} />}
-                  label="포장불가능"
-                  labelPlacement="start"
-                  style={{ width: 150, margin: 0, flexDirection: "row" }}
-                  onChange={(e) =>
-                    setSetting({
-                      ...setting,
-                      do_take_out: "N",
-                    })
-                  }
-                />
-              </RadioGroup>
-            </FormControl>
+              </Grid>
+            )}
           </Grid>
+          {/* // 배달 가능 여부 */}
+
+          {/* 주문 포장 가능 여부 */}
+          <Grid container>
+            <Grid item xs={12} md={5} mb={2}>
+              <Typography fontWeight="bold">주문 포장 가능 여부</Typography>
+              <FormControl component="fieldset">
+                <RadioGroup
+                  row
+                  aria-label="position"
+                  name="position"
+                  defaultValue="N"
+                >
+                  <FormControlLabel
+                    value={"Y"}
+                    checked={setting.do_take_out === "Y" ? true : false}
+                    control={
+                      <Radio color="primary" style={{ paddingLeft: 0 }} />
+                    }
+                    label="포장가능"
+                    labelPlacement="start"
+                    style={{ width: 150, margin: 0, flexDirection: "row" }}
+                    onChange={(e) =>
+                      setSetting({
+                        ...setting,
+                        do_take_out: "Y",
+                      })
+                    }
+                  />
+                  <FormControlLabel
+                    value={"N"}
+                    checked={setting.do_take_out === "N" ? true : false}
+                    control={
+                      <Radio color="primary" style={{ paddingLeft: 0 }} />
+                    }
+                    label="포장불가능"
+                    labelPlacement="start"
+                    style={{ width: 150, margin: 0, flexDirection: "row" }}
+                    onChange={(e) =>
+                      setSetting({
+                        ...setting,
+                        do_take_out: "N",
+                      })
+                    }
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+            {setting.do_take_out === "Y" && (
+              <>
+                <Grid item xs={12} md={2} mb={2} sx={{ mr: 2 }}>
+                  {/* <Typography fontWeight="bold">포장 최소 주문 금액</Typography> */}
+                  <TextField
+                    value={
+                      !setting.do_min_price_wrap
+                        ? "0"
+                        : setting.do_min_price_wrap
+                    }
+                    fullWidth
+                    id="outlined-basic"
+                    variant="outlined"
+                    label="포장 최소 주문 금액"
+                    placeholder="포장 최소 주문 금액을 입력해주세요."
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">원</InputAdornment>
+                      ),
+                    }}
+                    onChange={(e) => {
+                      const re = /^[0-9\b]+$/;
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        let changed = e.target.value.replace(/(^0+)/, "");
+                        setSetting({
+                          ...setting,
+                          do_min_price_wrap: changed,
+                        });
+                      }
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={2} mb={2}>
+                  {/* <Typography fontWeight="bold">포장 할인</Typography> */}
+                  <TextField
+                    value={
+                      !setting.do_take_out_discount
+                        ? "0"
+                        : setting.do_take_out_discount
+                    }
+                    fullWidth
+                    id="outlined-basic"
+                    variant="outlined"
+                    label="포장 할인"
+                    placeholder="포장 할인 금액을 입력해주세요."
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">원</InputAdornment>
+                      ),
+                    }}
+                    onChange={(e) => {
+                      const re = /^[0-9\b]+$/;
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        let changed = e.target.value.replace(/(^0+)/, "");
+                        setSetting({
+                          ...setting,
+                          do_take_out_discount: changed,
+                        });
+                      }
+                    }}
+                  />
+                </Grid>
+              </>
+            )}
+          </Grid>
+          {/* // 주문 포장 가능 여부 */}
+
+          {/* 먹고가기 기능 여부 */}
+          <Grid container>
+            <Grid item xs={12} md={5} mb={2}>
+              <FormControl component="fieldset">
+                <Typography fontWeight="bold">먹고가기 기능 여부</Typography>
+                <RadioGroup
+                  row
+                  aria-label="position"
+                  name="position"
+                  defaultValue="N"
+                >
+                  <FormControlLabel
+                    value={"Y"}
+                    checked={setting.do_for_here === "Y" ? true : false}
+                    control={
+                      <Radio color="primary" style={{ paddingLeft: 0 }} />
+                    }
+                    label="먹고가기 가능"
+                    labelPlacement="start"
+                    style={{ width: 150, margin: 0, flexDirection: "row" }}
+                    onChange={(e) =>
+                      setSetting({
+                        ...setting,
+                        do_for_here: "Y",
+                      })
+                    }
+                  />
+                  <FormControlLabel
+                    value={"N"}
+                    checked={setting.do_for_here === "N" ? true : false}
+                    control={
+                      <Radio color="primary" style={{ paddingLeft: 0 }} />
+                    }
+                    label="먹고가기 불가능"
+                    labelPlacement="start"
+                    style={{ width: 150, margin: 0, flexDirection: "row" }}
+                    onChange={(e) =>
+                      setSetting({
+                        ...setting,
+                        do_for_here: "N",
+                      })
+                    }
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+            {setting.do_for_here === "Y" && (
+              <>
+                {/* sx={{ mr: 5 }} */}
+                <Grid item xs={12} md={2} mb={2} sx={{ mr: 2 }}>
+                  {/* <Typography fontWeight="bold">
+                    먹고가기 최소 주문 금액
+                  </Typography> */}
+                  <TextField
+                    value={
+                      !setting.do_min_price_for_here
+                        ? "0"
+                        : setting.do_min_price_for_here
+                    }
+                    fullWidth
+                    id="outlined-basic"
+                    variant="outlined"
+                    label="먹고가기 최소 주문 금액"
+                    placeholder="먹고가기 최소 주문 금액을 입력해주세요."
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">원</InputAdornment>
+                      ),
+                    }}
+                    onChange={(e) => {
+                      const re = /^[0-9\b]+$/;
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        let changed = e.target.value.replace(/(^0+)/, "");
+                        setSetting({
+                          ...setting,
+                          do_min_price_for_here: changed,
+                        });
+                      }
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={2} mb={2} sx={{ mr: 2 }}>
+                  {/* <Typography fontWeight="bold">먹고가기 할인</Typography> */}
+                  <TextField
+                    value={
+                      !setting.do_for_here_discount
+                        ? "0"
+                        : setting.do_for_here_discount
+                    }
+                    fullWidth
+                    id="outlined-basic"
+                    variant="outlined"
+                    label="먹고가기 할인"
+                    placeholder="먹고가기 할인 금액을 입력해주세요."
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">원</InputAdornment>
+                      ),
+                    }}
+                    onChange={(e) => {
+                      const re = /^[0-9\b]+$/;
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        let changed = e.target.value.replace(/(^0+)/, "");
+                        setSetting({
+                          ...setting,
+                          do_for_here_discount: changed,
+                        });
+                      }
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={2} mb={2}>
+                  {/* <Typography fontWeight="bold">먹고가기 최소인원</Typography> */}
+                  <TextField
+                    value={
+                      !setting.do_for_here_minimum
+                        ? "0"
+                        : setting.do_for_here_minimum
+                    }
+                    fullWidth
+                    id="outlined-basic"
+                    variant="outlined"
+                    label="먹고가기 최소인원"
+                    placeholder="최소인원을 입력해주세요."
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">명</InputAdornment>
+                      ),
+                    }}
+                    onChange={(e) => {
+                      const re = /^[0-9\b]+$/;
+                      if (e.target.value === "" || re.test(e.target.value)) {
+                        let changed = e.target.value.replace(/(^0+)/, "");
+                        setSetting({
+                          ...setting,
+                          do_for_here_minimum: changed,
+                        });
+                      }
+                    }}
+                  />
+                </Grid>
+              </>
+            )}
+          </Grid>
+          {/* // 먹고가기 기능 여부 */}
+
+          {/* 쿠폰 사용 가능 여부 */}
           <Grid item xs={12} md={6} mb={2}>
             <FormControl component="fieldset">
               <Typography fontWeight="bold">쿠폰 사용 가능 여부</Typography>
@@ -547,6 +896,7 @@ export default function StoreInfo(props: IProps) {
               </RadioGroup>
             </FormControl>
           </Grid>
+          {/* // 쿠폰 사용 가능 여부 */}
 
           {/* <Box onClick={() => {
             dispatch(checkOrderAction.updateChecked(!isChecked));
@@ -554,7 +904,8 @@ export default function StoreInfo(props: IProps) {
             <p>테스트</p>
           </Box> */}
 
-          <Grid item xs={12} md={6} mb={2} mt={7}>
+          {/* mt={7} */}
+          <Grid item xs={12} md={6} mb={2} mt={3}>
             <ButtonGroup variant="outlined">
               <Button
                 variant={range === "all" ? "contained" : "outlined"}
