@@ -1,6 +1,6 @@
 # dongnaebook-owner-pos
 
-dongnaebook-owner-pos (Desktop)
+dongnaebook-owner-pos (Desktop)   
 <img width="550" alt="image" src="https://user-images.githubusercontent.com/25785760/195238424-6b1fd6b8-1c41-4682-ba79-1635e1bbcb93.png">
 
 ![image](https://user-images.githubusercontent.com/25785760/191441941-b61f5d59-fc45-48d1-9fef-8482cfeebbb5.png)
