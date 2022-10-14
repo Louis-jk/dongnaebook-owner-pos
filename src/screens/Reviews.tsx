@@ -1138,7 +1138,8 @@ export default function Reviews(props: any) {
                         ml={7}
                       >
                         <FontAwesomeIcon
-                          icon={faReply}
+                          // icon={faReply}
+                          icon="reply"
                           size="1x"
                           rotation={180}
                           style={{ marginRight: 10 }}

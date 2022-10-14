@@ -24,8 +24,6 @@
     "@testing-library/user-event": "^12.1.10",
     "@types/jest": "^26.0.24",
     "@types/node": "^16.4.6",
-    "@types/react": "^17.0.15",
-    "@types/react-dom": "^17.0.9",
     "@types/react-redux": "^7.1.18",
     "@types/react-router-dom": "^5.1.8",
     "axios": "^0.21.1",
@@ -40,6 +38,7 @@
     "jwt-decode": "^3.1.2",
     "jwt-encode": "^1.0.1",
     "moment": "^2.29.1",
+    "postinstall": "^0.8.0",
     "react": "^17.0.2",
     "react-datepicker": "^4.1.1",
     "react-dates": "^21.8.0",
@@ -58,8 +57,7 @@
     "redux": "^4.1.0",
     "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
-    "serialport": "^9.2.1",
-    "sqlite3": "^5.1.1",
+    "serialport": "10.0.0",
     "styled-components": "^5.3.0",
     "typescript": "^4.3.5",
     "web-vitals": "^1.0.1",
@@ -79,7 +77,9 @@
     "build:win64": "yarn build --win --x64",
     "build:win": "yarn build:win32 && yarn build:win64",
     "start:electron": "tsc -p electron/tsconfig.json && concurrently \"cross-env BROWSER=none npm run start:web\" \"wait-on http://localhost:3000 && electron ./build/electron.js\"",
-    "rebuild": "electron-rebuild -f -w dongnaebook-owner-pos"
+    "rebuild": "electron-rebuild -f -w dongnaebook-owner-pos",
+    "postinstall": "electron-rebuild install-app-deps",
+    "rebuild:serialport": "electron-rebuild -f -w serialport"
   },
   "build": {
     "productName": "동네북점주",
@@ -148,15 +148,19 @@
   },
   "devDependencies": {
     "@types/electron": "^1.6.10",
+    "@types/react": "^18.0.21",
     "@types/react-calendar": "3.4.3",
     "@types/react-datepicker": "^4.1.4",
     "@types/react-dates": "^21.8.3",
+    "@types/react-dom": "^18.0.6",
+    "@types/serialport": "^8.0.2",
     "@types/styled-components": "^5.1.12",
     "concurrently": "^6.2.1",
     "cross-env": "^7.0.3",
     "electron": "^13.2.1",
-    "electron-builder": "^23.0.2",
+    "electron-builder": "^23.6.0",
     "electron-rebuild": "^3.2.3",
+    "node-addon-api": "3.0.0",
     "wait-on": "^6.0.0"
   }
 }
